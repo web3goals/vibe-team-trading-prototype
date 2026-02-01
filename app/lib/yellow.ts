@@ -30,9 +30,9 @@ export async function authenticateWallet(
     address: walletClient.account?.address as `0x${string}`,
     session_key: sessionAccount.address,
     application: yellowConfig.appName,
-    allowances: [{ asset: "ytest.usd", amount: "1000000000" }],
+    allowances: yellowConfig.sessionAllowances,
     expires_at: sessionExpiresAt,
-    scope: "test.app",
+    scope: yellowConfig.sessionScope,
   };
 
   return new Promise((resolve, reject) => {
@@ -40,13 +40,12 @@ export async function authenticateWallet(
 
     yellowClient.listen(async (message: RPCResponse) => {
       // Check for error
-      if (message.method === "error") {
+      if (message.method === RPCMethod.Error) {
         clearTimeout(timeout);
-        reject(
-          new Error(
-            `Received error message, message: ${JSON.stringify(message)}`,
-          ),
+        console.log(
+          `[Yellow] Error message received, message: ${JSON.stringify(message)}`,
         );
+        reject(new Error("Error message received"));
         return;
       }
 

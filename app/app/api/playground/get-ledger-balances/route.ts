@@ -1,3 +1,4 @@
+import { yellowConfig } from "@/config/yellow";
 import { createFailedApiResponse, createSuccessApiResponse } from "@/lib/api";
 import { getErrorString } from "@/lib/error";
 import { authenticateWallet } from "@/lib/yellow";
@@ -24,9 +25,7 @@ export async function POST() {
     });
 
     // Connect to Yellow
-    const yellowClient = new Client({
-      url: "wss://clearnet-sandbox.yellow.com/ws",
-    });
+    const yellowClient = new Client({ url: yellowConfig.url });
     await yellowClient.connect();
 
     // Authenticate and get session account and signer
