@@ -15,32 +15,45 @@ export async function POST() {
   try {
     console.log("[API] Getting ledger balances...");
 
-    const account1 = privateKeyToAccount(
+    // Prepare private keys
+    const privateKeys = [
       process.env.ACCOUNT_1_PRIVATE_KEY as `0x${string}`,
-    );
-    const walletClient1 = createWalletClient({
-      account: account1,
-      chain: sepolia,
-      transport: http(),
-    });
+      process.env.ACCOUNT_2_PRIVATE_KEY as `0x${string}`,
+    ];
 
-    // Connect to Yellow
-    const yellowClient = new Client({ url: yellowConfig.url });
-    await yellowClient.connect();
+    const responses: { account: string; response: unknown }[] = [];
+    for (const privateKey of privateKeys) {
+      // Create a new Yellow client for each account to avoid listener conflicts
+      const yellowClient = new Client({ url: yellowConfig.url });
+      await yellowClient.connect();
 
-    // Authenticate and get session account and signer
-    const sessionAccount = await authenticateWallet(
-      yellowClient,
-      walletClient1,
-    );
-    const sessionSigner = createECDSAMessageSigner(sessionAccount.privateKey);
+      // Create wallet client
+      const account = privateKeyToAccount(privateKey);
+      const walletClient = createWalletClient({
+        account: account,
+        chain: sepolia,
+        transport: http(),
+      });
 
-    // Get ledger balances
-    const ledgerBalancesMsg =
-      await createGetLedgerBalancesMessage(sessionSigner);
-    const response = await yellowClient.sendMessage(ledgerBalancesMsg);
+      // Authenticate and get session signer
+      const sessionAccount = await authenticateWallet(
+        yellowClient,
+        walletClient,
+      );
+      const sessionSigner = createECDSAMessageSigner(sessionAccount.privateKey);
 
-    return createSuccessApiResponse(response);
+      // Get ledger balances
+      const getLedgerBalancesMessage =
+        await createGetLedgerBalancesMessage(sessionSigner);
+      const response = await yellowClient.sendMessage(getLedgerBalancesMessage);
+
+      responses.push({ account: account.address, response: response });
+
+      // Close the connection after use
+      await yellowClient.disconnect();
+    }
+
+    return createSuccessApiResponse(responses);
   } catch (error) {
     console.error(
       `[API] Failed to get ledger balances, error: ${getErrorString(error)}`,
