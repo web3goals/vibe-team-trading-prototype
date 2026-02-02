@@ -35,16 +35,16 @@ export async function POST() {
         transport: http(),
       });
 
-      // Authenticate and get session signer
+      // Authenticate and get message signer
       const sessionAccount = await authenticateWallet(
         yellowClient,
         walletClient,
       );
-      const sessionSigner = createECDSAMessageSigner(sessionAccount.privateKey);
+      const messageSigner = createECDSAMessageSigner(sessionAccount.privateKey);
 
       // Get ledger balances
       const getLedgerBalancesMessage =
-        await createGetLedgerBalancesMessage(sessionSigner);
+        await createGetLedgerBalancesMessage(messageSigner);
       const response = await yellowClient.sendMessage(getLedgerBalancesMessage);
 
       responses.push({ account: account.address, response: response });
