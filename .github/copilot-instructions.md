@@ -1,3 +1,6 @@
 # GitHub Copilot Custom Instructions
 
-- **Always verify documentation.** Before providing code for external libraries, frameworks, or APIs, use the `context7` MCP tool to fetch the latest documentation.
+## 📚 Documentation & Research
+
+- **Mandatory Verification:** Always use `context7` or web search to fetch the latest documentation for external libraries or APIs. Do not guess API signatures or configurations.
+- **Search Strategy:** First try `context7` for specialized library documentation. If missing or outdated, use web search tools for the most current information.
