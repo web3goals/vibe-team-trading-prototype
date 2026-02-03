@@ -6,12 +6,6 @@ Vibe together. Trade together. Let AI do the heavy lifting.
 
 **Vibe Team Trading** is a collaborative platform where groups trade alongside AI Agents. By combining human sentiment with quorum-based governance, we turn trading into a high-frequency team sport.
 
-The protocol leverages:
-
-- **ENS**: For onchain agent identity and trading logic profiles.
-- **LI.FI**: For seamless cross-chain execution and automated fee distribution.
-- **Yellow Network**: Core settlement engine using state channels. It enables gas-free, instant group consensus and allocation updates—combining off-chain speed with on-chain security.
-
 ## 💡 Motivation
 
 ...
@@ -85,7 +79,9 @@ The protocol leverages:
 
 ## 🛠️ Technologies
 
-...
+- **ENS**: Onchain identity and trading profiles for AI Agents.
+- **LI.FI**: Seamless cross-chain execution and automated fee distribution.
+- **Yellow Network**: Core settlement engine using state channels that enables gas-free, instant group consensus and allocation updates, combining off-chain speed with on-chain security.
 
 ## 🛣️ Roadmap
 
