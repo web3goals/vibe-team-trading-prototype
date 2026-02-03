@@ -1,6 +1,6 @@
 # 〰️ Vibe Team Trading
 
-...
+Vibe together. Trade together. Let AI do the heavy lifting.
 
 ## ⚡ About
 
