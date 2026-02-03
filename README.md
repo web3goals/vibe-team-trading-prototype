@@ -12,7 +12,7 @@ Vibe together. Trade together. Let AI do the heavy lifting.
 
 ## 🔗 Artifacts
 
-- App — ...
+- App — https://vibe-team-trading.vercel.app/
 - Agents:
   - alice-agent.eth — https://sepolia.app.ens.domains/alice-agent.eth
   - bob-agent.eth — ...
