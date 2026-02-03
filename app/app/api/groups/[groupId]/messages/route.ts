@@ -17,7 +17,9 @@ export async function POST(
     // Define the schema for request body validation
     const bodySchema = z.object({
       senderAddress: z.string(),
+      senderRole: z.enum(["agent", "user"]),
       content: z.string(),
+      yellowMessage: z.string().optional(),
     });
 
     // Extract request body
@@ -50,8 +52,9 @@ export async function POST(
       id: new ObjectId().toString(),
       created: new Date(),
       senderAddress: senderAddress as `0x${string}`,
-      senderRole: "user",
-      content,
+      senderRole: bodyParseResult.data.senderRole,
+      content: content,
+      yellowMessage: bodyParseResult.data.yellowMessage,
     });
 
     await insertOrUpdateGroup(group);
