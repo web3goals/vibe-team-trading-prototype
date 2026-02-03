@@ -70,10 +70,10 @@ export async function POST() {
     };
 
     // Define initial allocations
-    const initAllocations = [
+    const initAllocations: RPCAppSessionAllocation[] = [
       { participant: account1.address, asset: "ytest.usd", amount: "0.01" },
       { participant: account2.address, asset: "ytest.usd", amount: "0.00" },
-    ] as RPCAppSessionAllocation[];
+    ];
 
     // Create open app session message
     const createAppSessionMessage = await createCreateAppSessionMessage(
@@ -96,10 +96,10 @@ export async function POST() {
       sendCreateAppSessionMessageResponse.params.appSessionId;
 
     // Define final allocations
-    const finalAllocations = [
+    const finalAllocations: RPCAppSessionAllocation[] = [
       { participant: account1.address, asset: "ytest.usd", amount: "0.00" },
       { participant: account2.address, asset: "ytest.usd", amount: "0.01" },
-    ] as RPCAppSessionAllocation[];
+    ];
 
     // Create close app session message
     const closeAppSessionMessage = await createCloseAppSessionMessage(
