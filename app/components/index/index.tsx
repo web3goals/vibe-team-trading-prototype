@@ -5,6 +5,13 @@ import { Button } from "../ui/button";
 
 // TODO: Implement
 export function Index() {
+  // TODO: Implement
+  async function handleCreateGroup() {
+    console.log("Creating group...");
+
+    console.log("Creating group completed");
+  }
+
   return (
     <div className="max-w-xl mx-auto px-4 py-8">
       {/* Title, subtitle */}
