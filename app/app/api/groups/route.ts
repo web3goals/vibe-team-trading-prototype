@@ -15,7 +15,7 @@ import { createAppSessionMessage as createCreateAppSessionMessage } from "@erc78
 import { ObjectId } from "mongodb";
 import { NextRequest } from "next/server";
 import { createWalletClient, http, zeroAddress } from "viem";
-import { privateKeyToAccount } from "viem/accounts";
+import { privateKeyToAccount, privateKeyToAddress } from "viem/accounts";
 import { sepolia } from "viem/chains";
 import { Client } from "yellow-ts";
 import z from "zod";
@@ -81,22 +81,30 @@ export async function POST() {
     // Define group agent
     const groupAgent: GroupAgent = {
       ensName: "agent-a.eth",
-      address: "0xB418506A0dd0E6c81B2a2901a8aa2B6F409BFB3f",
+      address: privateKeyToAddress(
+        process.env.AGENT_PRIVATE_KEY as `0x${string}`,
+      ),
     };
 
     // Define group users
     const groupUsers: GroupUser[] = [
       {
         ensName: "user-a.eth",
-        address: "0x818eD0E13030FDE0C86B771a965084e44CC7F8d6",
+        address: privateKeyToAddress(
+          process.env.USER_1_PRIVATE_KEY as `0x${string}`,
+        ),
       },
       {
         ensName: "user-b.eth",
-        address: "0x568647a8f0dDc1772E97aDD23c70960138F16330",
+        address: privateKeyToAddress(
+          process.env.USER_2_PRIVATE_KEY as `0x${string}`,
+        ),
       },
       {
         ensName: "user-c.eth",
-        address: "0x60aef32500a838cb6ef895478606a3d2DC0deD7c",
+        address: privateKeyToAddress(
+          process.env.USER_3_PRIVATE_KEY as `0x${string}`,
+        ),
       },
     ];
 
