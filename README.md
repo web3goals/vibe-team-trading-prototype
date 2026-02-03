@@ -41,8 +41,8 @@ Vibe together. Trade together. Let AI do the heavy lifting.
 2. **AI Analysis**: The Agent reads the chat, analyzes the market, and proposes a specific trade.
    - _Agent: "Buying BTC makes sense. I can allocate 1.0 USD from each member, selling when RSI < 30."_
 3. **Consensus**: Users sign the new **trade proposal** by clicking the **Sign Idea** button.
-   - _User A: "I've signed the buy-in for 'Buy BTC'"_
-   - _User B: "Signed!"_
+   - _System: "User A signed the idea 👌 "_
+   - _System: "User B signed the idea 👌"_
 4. **State Update**: Once 2/3 quorum is reached, the Yellow app state updates with new allocations.
 
 ---
