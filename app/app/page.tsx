@@ -14,7 +14,6 @@ export default function IndexPage() {
         combining human sentiment with quorum-based governance, we turn trading
         into a high-frequency team sport.
       </h4>
-
       {/* Button */}
       <div className="flex flex-col items-center gap-4 mt-4">
         {/* TODO: Implement */}
