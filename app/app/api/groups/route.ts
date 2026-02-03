@@ -1,17 +1,8 @@
-import { demoConfig } from "@/config/demo";
-import { yellowConfig } from "@/config/yellow";
 import { createFailedApiResponse, createSuccessApiResponse } from "@/lib/api";
 import { getErrorString } from "@/lib/error";
 import { Group } from "@/mongodb/models/group";
 import { findGroups, insertOrUpdateGroup } from "@/mongodb/services/group";
 import { GroupAgent, GroupMessage, GroupUser } from "@/types/group";
-import {
-  createECDSAMessageSigner,
-  RPCAppDefinition,
-  RPCAppSessionAllocation,
-  RPCProtocolVersion,
-} from "@erc7824/nitrolite";
-import { createAppSessionMessage as createCreateAppSessionMessage } from "@erc7824/nitrolite/dist/rpc/api";
 import { ObjectId } from "mongodb";
 import { NextRequest } from "next/server";
 import { zeroAddress } from "viem";
@@ -77,7 +68,18 @@ export async function POST(request: NextRequest) {
 
     // Define the schema for request body validation
     const bodySchema = z.object({
-      sessionAccountPrivateKey: z.string(),
+      agent: z.object({
+        ensName: z.string(),
+        address: z.string().startsWith("0x"),
+      }),
+      users: z.array(
+        z.object({
+          ensName: z.string(),
+          address: z.string().startsWith("0x"),
+        }),
+      ),
+      yellowAppDefinition: z.any(),
+      yellowCreateAppSessionMessage: z.string(),
     });
 
     // Extract request body
@@ -97,79 +99,14 @@ export async function POST(request: NextRequest) {
     }
 
     // Extract validated data
-    const { sessionAccountPrivateKey } = bodyParseResult.data;
+    const { agent, users, yellowAppDefinition, yellowCreateAppSessionMessage } =
+      bodyParseResult.data;
 
-    // Define group agent
-    const groupAgent: GroupAgent = {
-      ensName: demoConfig.agent.ensName,
-      address: demoConfig.agent.address as `0x${string}`,
-    };
+    // Set group agent
+    const groupAgent = agent as GroupAgent;
 
-    // Define group users
-    const groupUsers: GroupUser[] = [
-      {
-        ensName: demoConfig.userA.ensName,
-        address: demoConfig.userA.address as `0x${string}`,
-      },
-      {
-        ensName: demoConfig.userB.ensName,
-        address: demoConfig.userB.address as `0x${string}`,
-      },
-      {
-        ensName: demoConfig.userC.ensName,
-        address: demoConfig.userC.address as `0x${string}`,
-      },
-    ];
-
-    // Define Yellow app definition
-    const yellowAppDefinition: RPCAppDefinition = {
-      protocol: RPCProtocolVersion.NitroRPC_0_4,
-      participants: [
-        groupAgent.address,
-        groupUsers[0].address,
-        groupUsers[1].address,
-        groupUsers[2].address,
-      ],
-      weights: [0, 25, 25, 25],
-      quorum: 50,
-      challenge: 0,
-      nonce: Date.now(),
-      application: yellowConfig.appName,
-    };
-
-    // Define Yellow app allocations
-    const yellowAppAllocations: RPCAppSessionAllocation[] = [
-      { participant: groupAgent.address, asset: "ytest.usd", amount: "0.0" },
-      {
-        participant: groupUsers[0].address,
-        asset: "ytest.usd",
-        amount: "100.0",
-      },
-      {
-        participant: groupUsers[1].address,
-        asset: "ytest.usd",
-        amount: "100.0",
-      },
-      {
-        participant: groupUsers[2].address,
-        asset: "ytest.usd",
-        amount: "100.0",
-      },
-    ];
-
-    // Create Yellow message signer
-    const messageSigner = createECDSAMessageSigner(
-      sessionAccountPrivateKey as `0x${string}`,
-    );
-
-    // Create Yellow app session
-    const createAppSessionMessage = await createCreateAppSessionMessage(
-      messageSigner,
-      {
-        definition: yellowAppDefinition,
-        allocations: yellowAppAllocations,
-      },
-    );
+    // Set group users
+    const groupUsers = users as GroupUser[];
 
     // Define group messages
     const groupMessages: GroupMessage[] = [];
@@ -185,8 +122,8 @@ export async function POST(request: NextRequest) {
       created: new Date(),
       senderAddress: groupUsers[0].address,
       senderRole: "system",
-      content: `Sign a message to create an Yellow app session, create app session message: ${createAppSessionMessage}`,
-      yellowMessage: createAppSessionMessage,
+      content: `Sign a message to create an Yellow app session, create app session message: ${yellowCreateAppSessionMessage}`,
+      yellowMessage: yellowCreateAppSessionMessage,
     });
 
     // Create a new group
