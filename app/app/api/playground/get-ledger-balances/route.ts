@@ -17,8 +17,10 @@ export async function POST() {
 
     // Prepare private keys
     const privateKeys = [
+      process.env.AGENT_PRIVATE_KEY as `0x${string}`,
       process.env.ACCOUNT_1_PRIVATE_KEY as `0x${string}`,
       process.env.ACCOUNT_2_PRIVATE_KEY as `0x${string}`,
+      process.env.ACCOUNT_3_PRIVATE_KEY as `0x${string}`,
     ];
 
     const responses: { account: string; response: unknown }[] = [];
