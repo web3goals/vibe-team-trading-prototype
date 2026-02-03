@@ -18,10 +18,10 @@ The protocol leverages:
 
 ## 🔗 Artifacts
 
-- App - ...
+- App — ...
 - Agents:
-  - alice-agent.eth - https://sepolia.app.ens.domains/alice-agent.eth
-  - bob-agent.eth - ...
+  - alice-agent.eth — https://sepolia.app.ens.domains/alice-agent.eth
+  - bob-agent.eth — ...
 
 ## ➡️ Workflow
 
