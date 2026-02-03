@@ -5,6 +5,24 @@ import { appConfig } from "@/config/app";
 import "@/styles/globals.css";
 import type { Metadata } from "next";
 import { Toaster } from "sonner";
+import { IBM_Plex_Mono, Lora, Plus_Jakarta_Sans } from "next/font/google";
+import { cn } from "@/lib/utils";
+
+const plusJakartaSans = Plus_Jakarta_Sans({
+  variable: "--font-sans",
+  subsets: ["latin"],
+});
+
+const lora = Lora({
+  variable: "--font-serif",
+  subsets: ["latin"],
+});
+
+const ibmPlexMono = IBM_Plex_Mono({
+  variable: "--font-mono",
+  subsets: ["latin"],
+  weight: ["400"],
+});
 
 export const metadata: Metadata = {
   title: {
@@ -24,7 +42,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="bg-background antialiased">
+      <body
+        className={cn(
+          "bg-background antialiased",
+          plusJakartaSans.variable,
+          lora.variable,
+          ibmPlexMono.variable,
+        )}
+      >
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
