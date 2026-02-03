@@ -1,14 +1,22 @@
 import { createFailedApiResponse, createSuccessApiResponse } from "@/lib/api";
 import { getErrorString } from "@/lib/error";
+import { findGroups, insertOrUpdateGroup } from "@/mongodb/services/group";
+import { ObjectId } from "mongodb";
 import { NextRequest } from "next/server";
 import z from "zod";
 
-export async function POST(request: NextRequest) {
+export async function POST(
+  request: NextRequest,
+  { params }: { params: Promise<{ groupId: string }> },
+) {
   try {
     console.log("[API] Posting message...");
 
+    const { groupId } = await params;
+
     // Define the schema for request body validation
     const bodySchema = z.object({
+      senderAddress: z.string(),
       content: z.string(),
     });
 
@@ -29,10 +37,26 @@ export async function POST(request: NextRequest) {
     }
 
     // Extract validated data
-    const { content } = bodyParseResult.data;
+    const { senderAddress, content } = bodyParseResult.data;
 
-    // Return the result
-    return createSuccessApiResponse({ content });
+    // Find the group
+    const group = await findGroups({ id: groupId }).then((groups) => groups[0]);
+    if (!group) {
+      throw new Error(`Group not found with id: ${groupId}`);
+    }
+
+    // Add message to the group and save to database
+    group.messages.push({
+      id: new ObjectId().toString(),
+      created: new Date(),
+      senderAddress: senderAddress as `0x${string}`,
+      senderRole: "user",
+      content,
+    });
+
+    await insertOrUpdateGroup(group);
+
+    return createSuccessApiResponse({ group });
   } catch (error) {
     console.error(
       `[API] Failed to post message, error: ${getErrorString(error)}`,
