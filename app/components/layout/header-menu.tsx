@@ -1,7 +1,9 @@
 "use client";
 
-import { LogInIcon } from "lucide-react";
-import { Avatar, AvatarImage } from "../ui/avatar";
+import { useUser } from "@/components/providers/user-provider";
+import { demoConfig } from "@/config/demo";
+import { LogInIcon, LogOutIcon } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
 import {
   DropdownMenu,
@@ -11,20 +13,61 @@ import {
 } from "../ui/dropdown-menu";
 
 export function HeaderMenu() {
+  const { address, ensName, signIn, signOut, isSigningIn } = useUser();
+
+  if (!address) {
+    return (
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="outline" disabled={isSigningIn}>
+            <LogInIcon />
+            {isSigningIn ? "Signing in..." : "Sign in"}
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem
+            onClick={() =>
+              signIn(demoConfig.userA.address, demoConfig.userA.ensName)
+            }
+          >
+            Sign in as User A
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() =>
+              signIn(demoConfig.userB.address, demoConfig.userB.ensName)
+            }
+          >
+            Sign in as User B
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() =>
+              signIn(demoConfig.userC.address, demoConfig.userC.ensName)
+            }
+          >
+            Sign in as User C
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    );
+  }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button>
+        <Button variant="ghost" className="flex items-center gap-2">
           <Avatar className="size-6">
-            <AvatarImage src="https://api.dicebear.com/9.x/notionists/svg?seed=Andrea&backgroundColor=ffffff" />
+            <AvatarImage
+              src={`https://api.dicebear.com/9.x/notionists/svg?seed=${ensName}&backgroundColor=ffffff`}
+            />
+            <AvatarFallback>{ensName?.[0]?.toUpperCase()}</AvatarFallback>
           </Avatar>
-          Demo user
+          {ensName}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem disabled={true}>
-          <LogInIcon />
-          Sign in <span className="text-muted-foreground">(Coming soon)</span>
+        <DropdownMenuItem onClick={signOut} className="text-destructive">
+          <LogOutIcon className="size-4" />
+          Sign out
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

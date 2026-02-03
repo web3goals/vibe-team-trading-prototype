@@ -1,5 +1,6 @@
 "use client";
 
+import { useUser } from "@/components/providers/user-provider";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { demoConfig } from "@/config/demo";
@@ -14,29 +15,9 @@ import {
 } from "@erc7824/nitrolite";
 import { createAppSessionMessage as createCreateAppSessionMessage } from "@erc7824/nitrolite/dist/rpc/api";
 import axios from "axios";
-import { useState } from "react";
 
 export default function PlaygroundPage() {
-  const [address, setAddress] = useState<string | undefined>();
-  const [ensName, setEnsName] = useState<string | undefined>();
-  const [sessionAccountPrivateKey, setSessionAccountPrivateKey] = useState<
-    string | undefined
-  >();
-
-  async function signIn(address: string, ensName: string) {
-    console.log(`Signing in, address: ${address}...`);
-
-    const { data } = await axios.post("/api/yellow/session-account", {
-      address: address,
-    });
-    const sessionAccount = data.data.sessionAccount;
-
-    setAddress(address);
-    setEnsName(ensName);
-    setSessionAccountPrivateKey(sessionAccount.privateKey);
-
-    console.log("Signing in completed");
-  }
+  const { address, ensName, sessionAccountPrivateKey } = useUser();
 
   async function createGroup() {
     console.log("Creating group...");
@@ -173,27 +154,6 @@ export default function PlaygroundPage() {
         </p>
       </div>
       <div className="flex flex-col items-start gap-2 mt-4">
-        <Button
-          onClick={() =>
-            signIn(demoConfig.userA.address, demoConfig.userA.ensName)
-          }
-        >
-          Sign in User A
-        </Button>
-        <Button
-          onClick={() =>
-            signIn(demoConfig.userB.address, demoConfig.userB.ensName)
-          }
-        >
-          Sign in User B
-        </Button>
-        <Button
-          onClick={() =>
-            signIn(demoConfig.userC.address, demoConfig.userC.ensName)
-          }
-        >
-          Sign in User C
-        </Button>
         <Button variant="outline" onClick={() => createGroup()}>
           Create Group
         </Button>
