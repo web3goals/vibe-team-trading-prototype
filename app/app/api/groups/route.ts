@@ -1,7 +1,7 @@
+import { demoConfig } from "@/config/demo";
 import { yellowConfig } from "@/config/yellow";
 import { createFailedApiResponse, createSuccessApiResponse } from "@/lib/api";
 import { getErrorString } from "@/lib/error";
-import { authenticateWallet } from "@/lib/yellow";
 import { Group } from "@/mongodb/models/group";
 import { findGroups, insertOrUpdateGroup } from "@/mongodb/services/group";
 import { GroupAgent, GroupMessage, GroupUser } from "@/types/group";
@@ -14,10 +14,7 @@ import {
 import { createAppSessionMessage as createCreateAppSessionMessage } from "@erc7824/nitrolite/dist/rpc/api";
 import { ObjectId } from "mongodb";
 import { NextRequest } from "next/server";
-import { createWalletClient, http, zeroAddress } from "viem";
-import { privateKeyToAccount, privateKeyToAddress } from "viem/accounts";
-import { sepolia } from "viem/chains";
-import { Client } from "yellow-ts";
+import { zeroAddress } from "viem";
 import z from "zod";
 
 export async function GET(request: NextRequest) {
@@ -74,37 +71,53 @@ export async function GET(request: NextRequest) {
   }
 }
 
-export async function POST() {
+export async function POST(request: NextRequest) {
   try {
     console.log("[API] Creating group...");
 
+    // Define the schema for request body validation
+    const bodySchema = z.object({
+      sessionAccountPrivateKey: z.string(),
+    });
+
+    // Extract request body
+    const body = await request.json();
+
+    // Validate request body using schema
+    const bodyParseResult = bodySchema.safeParse(body);
+    if (!bodyParseResult.success) {
+      return createFailedApiResponse(
+        {
+          message: `Invalid request body: ${bodyParseResult.error.issues
+            .map((issue) => `${issue.path.join(".")}: ${issue.message}`)
+            .join(", ")}`,
+        },
+        400,
+      );
+    }
+
+    // Extract validated data
+    const { sessionAccountPrivateKey } = bodyParseResult.data;
+
     // Define group agent
     const groupAgent: GroupAgent = {
-      ensName: "agent-a.eth",
-      address: privateKeyToAddress(
-        process.env.AGENT_PRIVATE_KEY as `0x${string}`,
-      ),
+      ensName: demoConfig.agent.ensName,
+      address: demoConfig.agent.address as `0x${string}`,
     };
 
     // Define group users
     const groupUsers: GroupUser[] = [
       {
-        ensName: "user-a.eth",
-        address: privateKeyToAddress(
-          process.env.USER_1_PRIVATE_KEY as `0x${string}`,
-        ),
+        ensName: demoConfig.userA.ensName,
+        address: demoConfig.userA.address as `0x${string}`,
       },
       {
-        ensName: "user-b.eth",
-        address: privateKeyToAddress(
-          process.env.USER_2_PRIVATE_KEY as `0x${string}`,
-        ),
+        ensName: demoConfig.userB.ensName,
+        address: demoConfig.userB.address as `0x${string}`,
       },
       {
-        ensName: "user-c.eth",
-        address: privateKeyToAddress(
-          process.env.USER_3_PRIVATE_KEY as `0x${string}`,
-        ),
+        ensName: demoConfig.userC.ensName,
+        address: demoConfig.userC.address as `0x${string}`,
       },
     ];
 
@@ -116,7 +129,7 @@ export async function POST() {
         groupUsers[0].address,
         groupUsers[1].address,
         groupUsers[2].address,
-      ].flat(),
+      ],
       weights: [0, 25, 25, 25],
       quorum: 50,
       challenge: 0,
@@ -144,19 +157,10 @@ export async function POST() {
       },
     ];
 
-    // Define Yellow message signer (agent)
-    const yellowClient = new Client({ url: yellowConfig.url });
-    await yellowClient.connect();
-    const account = privateKeyToAccount(
-      process.env.AGENT_PRIVATE_KEY as `0x${string}`,
+    // Create Yellow message signer
+    const messageSigner = createECDSAMessageSigner(
+      sessionAccountPrivateKey as `0x${string}`,
     );
-    const walletClient = createWalletClient({
-      account: account,
-      chain: sepolia,
-      transport: http(),
-    });
-    const sessionAccount = await authenticateWallet(yellowClient, walletClient);
-    const messageSigner = createECDSAMessageSigner(sessionAccount.privateKey);
 
     // Create Yellow app session
     const createAppSessionMessage = await createCreateAppSessionMessage(
