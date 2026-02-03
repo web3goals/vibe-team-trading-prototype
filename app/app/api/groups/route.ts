@@ -115,7 +115,7 @@ export async function POST(request: NextRequest) {
       created: new Date(),
       senderAddress: zeroAddress,
       senderRole: "system",
-      content: `${groupUsers[0].ensName} created a group with ${groupAgent.ensName}, ${groupUsers[1].ensName}, and ${groupUsers[2].ensName}`,
+      content: `${groupUsers[0].ensName} created a group with ${groupAgent.ensName}, ${groupUsers[1].ensName}...`,
     });
     groupMessages.push({
       id: new ObjectId().toString(),
