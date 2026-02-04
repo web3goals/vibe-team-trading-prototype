@@ -1,59 +1,32 @@
 "use client";
 
-import { Group as GroupModel } from "@/mongodb/models/group";
-import { ApiResponse } from "@/types/api";
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import { useGroup } from "@/hooks/use-group";
+import { Loading } from "../ui-extra/loading";
+import { GroupMessageCard } from "./cards/group-message-card";
+import EntityList from "../ui-extra/entity-list";
+import { GroupMessage } from "@/types/group";
+import EntityListDefaultNoEntitiesCard from "../ui-extra/entity-list-default-no-entities-card";
 
 export function Group(props: { id: string }) {
-  const {
-    data: group,
-    isLoading,
-    error,
-  } = useQuery({
-    queryKey: ["group", props.id],
-    queryFn: async () => {
-      const response = await axios.get<ApiResponse<{ groups: GroupModel[] }>>(
-        `/api/groups?id=${props.id}`,
-      );
-      const result = response.data;
-      if (!result.isSuccess || !result.data) {
-        throw new Error(result.error?.message || "Failed to fetch group");
-      }
-      return result.data.groups[0];
-    },
-  });
+  const { data: group, isLoading: isGroupLoading } = useGroup(props.id);
 
-  if (isLoading) {
-    return (
-      <div className="max-w-xl mx-auto px-4 py-8">
-        <p>Loading group — {props.id}...</p>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="max-w-xl mx-auto px-4 py-8">
-        <p className="text-red-500">Error: {(error as Error).message}</p>
-      </div>
-    );
-  }
-
-  if (!group) {
-    return (
-      <div className="max-w-xl mx-auto px-4 py-8">
-        <p>Group {props.id} not found</p>
-      </div>
-    );
+  if (isGroupLoading || !group) {
+    return <Loading />;
   }
 
   return (
     <div className="max-w-xl mx-auto px-4 py-8">
-      <p className="font-bold mb-4">Group — {props.id}</p>
-      <pre className="p-4 border rounded overflow-auto whitespace-pre-wrap break-all text-xs">
-        {JSON.stringify(group, null, 2)}
-      </pre>
+      <p className="text-sm text-muted-foreground">ID: {props.id}</p>
+      <EntityList<GroupMessage>
+        entities={group.messages}
+        renderEntityCard={(groupMessage, index) => (
+          <GroupMessageCard key={index} groupMessage={groupMessage} />
+        )}
+        noEntitiesCard={
+          <EntityListDefaultNoEntitiesCard noEntitiesText="No data yet, check back later" />
+        }
+        className="mt-4"
+      />
     </div>
   );
 }
