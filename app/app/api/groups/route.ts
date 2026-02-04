@@ -136,7 +136,7 @@ export async function POST(request: NextRequest) {
       ...users.map((user) => ({
         participant: user.address,
         asset: "ytest.usd",
-        amount: "100.0",
+        amount: "10.0",
       })),
     ];
 
