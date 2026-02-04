@@ -13,6 +13,7 @@ import {
   createCloseAppSessionMessage,
   createAppSessionMessage as createCreateAppSessionMessage,
   createECDSAMessageSigner,
+  createGetLedgerBalancesMessage,
 } from "@erc7824/nitrolite/dist/rpc/api";
 import { createWalletClient, http, WalletClient } from "viem";
 import { Account, privateKeyToAccount } from "viem/accounts";
@@ -28,6 +29,12 @@ export async function POST() {
     const walletClients = await getWalletClients(accounts);
     const { yellowClients, messageSigners } =
       await authenticateWalletClients(walletClients);
+
+    // Get ledger balances
+    const ledgerBalancesBeforeCreateApp = await getLedgerBalances(
+      yellowClients,
+      messageSigners,
+    );
 
     // Define the app
     const appDefinition: RPCAppDefinition = {
@@ -57,16 +64,18 @@ export async function POST() {
       initAllocations,
       messageSigners,
     );
-    console.log({ createAppSessionMessage });
     const sendCreateAppSessionMessageResponse =
       await yellowClients[0].sendMessage(createAppSessionMessage);
-    console.log({
-      sendCreateAppSessionMessageResponse,
-    });
 
     // Save app session ID
     const appSessionId =
       sendCreateAppSessionMessageResponse.params.appSessionId;
+
+    // Get ledger balances
+    const ledgerBalancesBeforeCloseApp = await getLedgerBalances(
+      yellowClients,
+      messageSigners,
+    );
 
     // Define final allocations
     const finalAllocations: RPCAppSessionAllocation[] = [
@@ -83,7 +92,12 @@ export async function POST() {
     );
     const sendCloseAppSessionMessageResponse =
       await yellowClients[0].sendMessage(closeAppSessionMessage);
-    console.log({ sendCloseAppSessionMessageResponse });
+
+    // Get ledger balances
+    const ledgerBalancesAfterCloseApp = await getLedgerBalances(
+      yellowClients,
+      messageSigners,
+    );
 
     // Close the yellow clients
     for (const yellowClient of yellowClients) {
@@ -93,6 +107,9 @@ export async function POST() {
     return createSuccessApiResponse({
       sendCreateAppSessionMessageResponse,
       sendCloseAppSessionMessageResponse,
+      ledgerBalancesBeforeCreateApp,
+      ledgerBalancesBeforeCloseApp,
+      ledgerBalancesAfterCloseApp,
     });
   } catch (error) {
     console.error(
@@ -193,4 +210,17 @@ async function getCloseAppSessionMessage(
   messageJson.sig.push(signature2);
 
   return JSON.stringify(messageJson);
+}
+
+async function getLedgerBalances(
+  yellowClients: Client[],
+  messageSigners: MessageSigner[],
+): Promise<string[]> {
+  const ledgerBalances: string[] = [];
+  for (let i = 0; i < yellowClients.length; i++) {
+    const message = await createGetLedgerBalancesMessage(messageSigners[i]);
+    const response = await yellowClients[i].sendMessage(message);
+    ledgerBalances.push(JSON.stringify(response));
+  }
+  return ledgerBalances;
 }
