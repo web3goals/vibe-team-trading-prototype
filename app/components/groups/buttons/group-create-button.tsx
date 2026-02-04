@@ -34,19 +34,19 @@ export function GroupCreateButton() {
 
       // Define group agent
       const groupAgent: GroupAgent = {
-        ensName: demoConfig.agentA.ensName,
         address: demoConfig.agentA.address as `0x${string}`,
+        ensName: demoConfig.agentA.ensName,
       };
 
       // Define group users
       const groupUsers: GroupUser[] = [
         {
-          ensName: demoConfig.userA.ensName,
           address: demoConfig.userA.address as `0x${string}`,
+          ensName: demoConfig.userA.ensName,
         },
         {
-          ensName: demoConfig.userB.ensName,
           address: demoConfig.userB.address as `0x${string}`,
+          ensName: demoConfig.userB.ensName,
         },
       ];
 

@@ -68,13 +68,13 @@ export async function POST(request: NextRequest) {
     // Define the schema for request body validation
     const bodySchema = z.object({
       agent: z.object({
-        ensName: z.string(),
         address: z.string().startsWith("0x"),
+        ensName: z.string(),
       }),
       users: z.array(
         z.object({
-          ensName: z.string(),
           address: z.string().startsWith("0x"),
+          ensName: z.string(),
         }),
       ),
       yellowAppDefinition: z.any(),

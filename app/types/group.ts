@@ -1,11 +1,11 @@
 export type GroupAgent = {
-  ensName: string;
   address: `0x${string}`;
+  ensName: string;
 };
 
 export type GroupUser = {
-  ensName: string;
   address: `0x${string}`;
+  ensName: string;
 };
 
 export type GroupMessage = {
