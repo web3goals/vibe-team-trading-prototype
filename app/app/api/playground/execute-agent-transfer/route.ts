@@ -100,8 +100,8 @@ export async function POST() {
     // Send a close app session message
     const finalAllocations: RPCAppSessionAllocation[] = [
       { participant: accounts[0].address, asset: "ytest.usd", amount: "0.0" },
-      { participant: accounts[1].address, asset: "ytest.usd", amount: "10.0" },
-      { participant: accounts[2].address, asset: "ytest.usd", amount: "10.0" },
+      { participant: accounts[1].address, asset: "ytest.usd", amount: "9.0" },
+      { participant: accounts[2].address, asset: "ytest.usd", amount: "9.0" },
     ];
     const closeAppSessionMessage = await getCloseAppSessionMessage(
       appSessionId,
