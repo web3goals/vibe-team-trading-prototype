@@ -117,7 +117,6 @@ export function GroupCreateButton() {
 
   return (
     <Button
-      variant="default"
       size="lg"
       disabled={isProcessing}
       onClick={() => handleCreateGroup()}
