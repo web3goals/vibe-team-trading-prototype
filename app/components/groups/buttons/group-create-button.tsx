@@ -20,11 +20,7 @@ export function GroupCreateButton() {
       // Call create group API
       await axios.post("/api/groups", {
         agent: demoConfig.groupAgentA,
-        users: [
-          demoConfig.groupUserA,
-          demoConfig.groupUserB,
-          demoConfig.groupUserC,
-        ],
+        users: [demoConfig.groupUserA, demoConfig.groupUserB],
       });
 
       confetti({ ...confettiConfig });
