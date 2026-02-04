@@ -64,12 +64,12 @@ export async function PATCH(
     yellowMessageJson.sig.push(signature);
     message.yellowMessage = JSON.stringify(yellowMessageJson);
 
-    // Add system message
+    // Add agent message
     group.messages.push({
       id: new ObjectId().toString(),
       created: new Date(),
       senderAddress: zeroAddress,
-      senderRole: "system",
+      senderRole: "agent",
       content: `Message ${messageId} signed by ${senderEnsName}`,
     });
 
