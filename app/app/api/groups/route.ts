@@ -5,7 +5,6 @@ import { findGroups, insertOrUpdateGroup } from "@/mongodb/services/group";
 import { GroupAgent, GroupMessage, GroupUser } from "@/types/group";
 import { ObjectId } from "mongodb";
 import { NextRequest } from "next/server";
-import { zeroAddress } from "viem";
 import z from "zod";
 
 export async function GET(request: NextRequest) {
@@ -113,14 +112,14 @@ export async function POST(request: NextRequest) {
     groupMessages.push({
       id: new ObjectId().toString(),
       created: new Date(),
-      senderAddress: zeroAddress,
+      senderAddress: groupAgent.address,
       senderRole: "agent",
       content: `${groupUsers[0].ensName} created a group with ${groupAgent.ensName}, ${groupUsers[1].ensName}...`,
     });
     groupMessages.push({
       id: new ObjectId().toString(),
       created: new Date(),
-      senderAddress: groupUsers[0].address,
+      senderAddress: groupAgent.address,
       senderRole: "agent",
       content: `Sign a message to create an Yellow app session, create app session message: ${yellowCreateAppSessionMessage}`,
       yellowMessage: yellowCreateAppSessionMessage,
