@@ -61,7 +61,7 @@ export async function authenticateWallet(
           const verifyMsg = await createAuthVerifyMessage(signer, message);
           await yellowClient.sendMessage(verifyMsg);
           clearTimeout(timeout);
-          console.log("[Yellow] Auth challenge processed");
+          console.log("[Yellow] Processing auth challenge completed");
           resolve(sessionAccount);
         } catch (error) {
           clearTimeout(timeout);
