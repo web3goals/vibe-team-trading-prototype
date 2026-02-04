@@ -27,21 +27,30 @@ export function HeaderMenu() {
         <DropdownMenuContent align="end">
           <DropdownMenuItem
             onClick={() =>
-              signIn(demoConfig.userA.address, demoConfig.userA.ensName)
+              signIn(
+                demoConfig.groupUserA.address,
+                demoConfig.groupUserA.ensName,
+              )
             }
           >
             Sign in as User A
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() =>
-              signIn(demoConfig.userB.address, demoConfig.userB.ensName)
+              signIn(
+                demoConfig.groupUserB.address,
+                demoConfig.groupUserB.ensName,
+              )
             }
           >
             Sign in as User B
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() =>
-              signIn(demoConfig.userC.address, demoConfig.userC.ensName)
+              signIn(
+                demoConfig.groupUserC.address,
+                demoConfig.groupUserC.ensName,
+              )
             }
           >
             Sign in as User C

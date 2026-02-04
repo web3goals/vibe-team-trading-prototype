@@ -14,5 +14,13 @@ export type GroupMessage = {
   creatorAddress: `0x${string}`;
   creatorRole: "user" | "agent";
   content: string;
-  yellowMessage?: string;
+  extra?: {
+    yellow?: {
+      message: string;
+      messageCreated: Date;
+      messageSignerAddresses: `0x${string}`[];
+      response?: string; // Response from the Yellow network
+      responseCreated?: Date;
+    };
+  };
 };

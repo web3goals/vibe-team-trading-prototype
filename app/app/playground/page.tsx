@@ -7,6 +7,7 @@ import { GroupMessage } from "@/types/group";
 import { createECDSAMessageSigner, RPCData } from "@erc7824/nitrolite";
 import axios from "axios";
 
+// TODO: Fix
 export default function PlaygroundPage() {
   const { address, ensName, sessionAccountPrivateKey } = useUser();
 

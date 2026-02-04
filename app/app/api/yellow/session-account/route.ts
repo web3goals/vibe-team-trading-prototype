@@ -40,13 +40,13 @@ export async function POST(request: NextRequest) {
 
     // Get private key for the given address from demo config
     let privateKey: string | undefined;
-    if (getAddress(address) === getAddress(demoConfig.userA.address)) {
+    if (getAddress(address) === getAddress(demoConfig.groupUserA.address)) {
       privateKey = process.env.USER_A_PRIVATE_KEY;
     }
-    if (getAddress(address) === getAddress(demoConfig.userB.address)) {
+    if (getAddress(address) === getAddress(demoConfig.groupUserB.address)) {
       privateKey = process.env.USER_B_PRIVATE_KEY;
     }
-    if (getAddress(address) === getAddress(demoConfig.userC.address)) {
+    if (getAddress(address) === getAddress(demoConfig.groupUserC.address)) {
       privateKey = process.env.USER_C_PRIVATE_KEY;
     }
     if (!privateKey) {

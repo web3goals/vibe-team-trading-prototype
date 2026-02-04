@@ -16,7 +16,15 @@ export function Group(props: { id: string }) {
 
   return (
     <div className="max-w-xl mx-auto px-4 py-8">
-      <p className="text-sm text-muted-foreground">ID: {props.id}</p>
+      <div className="flex flex-col gap-2">
+        <p className="text-sm text-muted-foreground">ID: {props.id}</p>
+        <p className="text-sm text-muted-foreground wrap-break-word">
+          Agent: {JSON.stringify(group.agent)}
+        </p>
+        <p className="text-sm text-muted-foreground wrap-break-word">
+          Users: {JSON.stringify(group.users)}
+        </p>
+      </div>
       <EntityList<GroupMessage>
         entities={group.messages}
         renderEntityCard={(groupMessage, index) => (

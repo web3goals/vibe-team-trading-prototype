@@ -1,10 +1,20 @@
+import { demoConfig } from "@/config/demo";
+import { yellowConfig } from "@/config/yellow";
 import { createFailedApiResponse, createSuccessApiResponse } from "@/lib/api";
 import { getErrorString } from "@/lib/error";
 import { Group } from "@/mongodb/models/group";
 import { findGroups, insertOrUpdateGroup } from "@/mongodb/services/group";
 import { GroupAgent, GroupMessage, GroupUser } from "@/types/group";
+import {
+  createECDSAMessageSigner,
+  RPCAppDefinition,
+  RPCAppSessionAllocation,
+  RPCProtocolVersion,
+} from "@erc7824/nitrolite";
+import { createAppSessionMessage as createCreateAppSessionMessage } from "@erc7824/nitrolite/dist/rpc/api";
 import { ObjectId } from "mongodb";
 import { NextRequest } from "next/server";
+import { getAddress } from "viem";
 import z from "zod";
 
 export async function GET(request: NextRequest) {
@@ -68,17 +78,15 @@ export async function POST(request: NextRequest) {
     // Define the schema for request body validation
     const bodySchema = z.object({
       agent: z.object({
-        address: z.string().startsWith("0x"),
+        address: z.string(),
         ensName: z.string(),
       }),
       users: z.array(
         z.object({
-          address: z.string().startsWith("0x"),
+          address: z.string(),
           ensName: z.string(),
         }),
       ),
-      yellowAppDefinition: z.any(),
-      yellowCreateAppSessionMessage: z.string(),
     });
 
     // Extract request body
@@ -98,31 +106,80 @@ export async function POST(request: NextRequest) {
     }
 
     // Extract validated data
-    const { agent, users, yellowAppDefinition, yellowCreateAppSessionMessage } =
-      bodyParseResult.data;
+    const agent: GroupAgent = {
+      address: bodyParseResult.data.agent.address as `0x${string}`,
+      ensName: bodyParseResult.data.agent.ensName,
+    };
+    const users: GroupUser[] = bodyParseResult.data.users.map((user) => ({
+      address: user.address as `0x${string}`,
+      ensName: user.ensName,
+    }));
 
-    // Set group agent
-    const groupAgent = agent as GroupAgent;
+    // Define Yellow app definition
+    const yellowAppDefinition: RPCAppDefinition = {
+      protocol: RPCProtocolVersion.NitroRPC_0_4,
+      participants: [agent.address, ...users.map((user) => user.address)],
+      weights: [0, ...users.map(() => 25)],
+      quorum: 50,
+      challenge: 0,
+      nonce: Date.now(),
+      application: yellowConfig.appName,
+    };
 
-    // Set group users
-    const groupUsers = users as GroupUser[];
+    // Define Yellow app allocations
+    const yellowAppAllocations: RPCAppSessionAllocation[] = [
+      {
+        participant: agent.address,
+        asset: "ytest.usd",
+        amount: "0.0",
+      },
+      ...users.map((user) => ({
+        participant: user.address,
+        asset: "ytest.usd",
+        amount: "100.0",
+      })),
+    ];
+
+    // Define Yellow message signer for agent
+    let agentPrivateKey;
+    if (
+      getAddress(agent.address) === getAddress(demoConfig.groupAgentA.address)
+    ) {
+      agentPrivateKey = process.env.AGENT_A_PRIVATE_KEY;
+    }
+    if (!agentPrivateKey) {
+      throw new Error("Agent private key not found for signing");
+    }
+    const yellowMessageSigner = createECDSAMessageSigner(
+      agentPrivateKey as `0x${string}`,
+    );
+
+    // Create Yellow create app session message
+    const yellowCreateAppSessionMessage = await createCreateAppSessionMessage(
+      yellowMessageSigner,
+      {
+        definition: yellowAppDefinition,
+        allocations: yellowAppAllocations,
+      },
+    );
 
     // Define group messages
-    const groupMessages: GroupMessage[] = [];
-    groupMessages.push({
+    const messages: GroupMessage[] = [];
+    messages.push({
       id: new ObjectId().toString(),
       created: new Date(),
-      creatorAddress: groupAgent.address,
+      creatorAddress: agent.address,
       creatorRole: "agent",
-      content: `${groupUsers[0].ensName} created a group with ${groupAgent.ensName}, ${groupUsers[1].ensName}...`,
-    });
-    groupMessages.push({
-      id: new ObjectId().toString(),
-      created: new Date(),
-      creatorAddress: groupAgent.address,
-      creatorRole: "agent",
-      content: `Sign a message to create an Yellow app session, create app session message: ${yellowCreateAppSessionMessage}`,
-      yellowMessage: yellowCreateAppSessionMessage,
+      content:
+        `Created a group with ${agent.ensName}...\n\n` +
+        `Sign a message to create an Yellow app session`,
+      extra: {
+        yellow: {
+          message: yellowCreateAppSessionMessage,
+          messageCreated: new Date(),
+          messageSignerAddresses: [agent.address],
+        },
+      },
     });
 
     // Create a new group
@@ -130,10 +187,10 @@ export async function POST(request: NextRequest) {
       _id: new ObjectId(),
       created: new Date(),
       status: "active",
-      agent: groupAgent,
-      users: groupUsers,
-      messages: groupMessages,
-      yellowAppDefinition,
+      agent: agent,
+      users: users,
+      messages: messages,
+      yellowAppDefinition: yellowAppDefinition,
     };
 
     // Insert the group into the database

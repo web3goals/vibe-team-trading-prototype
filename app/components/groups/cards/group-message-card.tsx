@@ -6,7 +6,7 @@ import { handleError } from "@/lib/error";
 import { GroupMessage } from "@/types/group";
 import { createECDSAMessageSigner, RPCData } from "@erc7824/nitrolite";
 import confetti from "canvas-confetti";
-import { UsersIcon } from "lucide-react";
+import { SignatureIcon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -23,7 +23,7 @@ export function GroupMessageCard(props: { groupMessage: GroupMessage }) {
       if (!sessionAccountPrivateKey) {
         throw new Error("Please sign in");
       }
-      if (!props.groupMessage.yellowMessage) {
+      if (!props.groupMessage.extra?.yellow?.message) {
         throw new Error("No yellow message to sign");
       }
 
@@ -31,7 +31,9 @@ export function GroupMessageCard(props: { groupMessage: GroupMessage }) {
         sessionAccountPrivateKey as `0x${string}`,
       );
 
-      const yellowMessageJson = JSON.parse(props.groupMessage.yellowMessage);
+      const yellowMessageJson = JSON.parse(
+        props.groupMessage.extra.yellow.message,
+      );
       const signature = await yellowMessageSigner(
         yellowMessageJson.req as RPCData,
       );
@@ -63,7 +65,10 @@ export function GroupMessageCard(props: { groupMessage: GroupMessage }) {
           Content: {props.groupMessage.content}
         </p>
         <p className="text-sm text-muted-foreground wrap-break-word">
-          Yellow message: {props.groupMessage.yellowMessage || "N/A"}
+          Extra Yellow:{" "}
+          {props.groupMessage.extra?.yellow
+            ? JSON.stringify(props.groupMessage.extra.yellow)
+            : "N/A"}
         </p>
       </div>
       <Button
@@ -71,7 +76,7 @@ export function GroupMessageCard(props: { groupMessage: GroupMessage }) {
         onClick={() => handleSignYellowMessage()}
         className="mt-2"
       >
-        {isProcessing ? <Spinner /> : <UsersIcon />} Sign Yellow message
+        {isProcessing ? <Spinner /> : <SignatureIcon />} Sign Yellow message
       </Button>
     </div>
   );

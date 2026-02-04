@@ -10,16 +10,15 @@ export async function POST(
   { params }: { params: Promise<{ groupId: string }> },
 ) {
   try {
-    console.log("[API] Posting message...");
+    console.log("[API] Creating message...");
 
     const { groupId } = await params;
 
     // Define the schema for request body validation
     const bodySchema = z.object({
       creatorAddress: z.string(),
-      creatorRole: z.enum(["agent", "user"]),
+      creatorRole: z.enum(["user"]),
       content: z.string(),
-      yellowMessage: z.string().optional(),
     });
 
     // Extract request body
@@ -39,8 +38,7 @@ export async function POST(
     }
 
     // Extract validated data
-    const { creatorAddress, creatorRole, content, yellowMessage } =
-      bodyParseResult.data;
+    const { creatorAddress, creatorRole, content } = bodyParseResult.data;
 
     // Find the group
     const group = await findGroups({ id: groupId }).then((groups) => groups[0]);
@@ -55,7 +53,6 @@ export async function POST(
       creatorAddress: creatorAddress as `0x${string}`,
       creatorRole: creatorRole,
       content: content,
-      yellowMessage: yellowMessage,
     });
 
     await insertOrUpdateGroup(group);
@@ -63,7 +60,7 @@ export async function POST(
     return createSuccessApiResponse({ group });
   } catch (error) {
     console.error(
-      `[API] Failed to post message, error: ${getErrorString(error)}`,
+      `[API] Failed to create message, error: ${getErrorString(error)}`,
     );
     return createFailedApiResponse(
       { message: "Internal server error, try again later" },
