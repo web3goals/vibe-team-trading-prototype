@@ -14,6 +14,7 @@ import {
   createAppSessionMessage as createCreateAppSessionMessage,
   createECDSAMessageSigner,
   createGetLedgerBalancesMessage,
+  createSubmitAppStateMessage,
 } from "@erc7824/nitrolite/dist/rpc/api";
 import { createWalletClient, http, WalletClient } from "viem";
 import { Account, privateKeyToAccount } from "viem/accounts";
@@ -51,14 +52,12 @@ export async function POST() {
       application: yellowConfig.appName,
     };
 
-    // Define initial allocations
+    // Send a create app session message
     const initAllocations: RPCAppSessionAllocation[] = [
       { participant: accounts[0].address, asset: "ytest.usd", amount: "0.0" },
       { participant: accounts[1].address, asset: "ytest.usd", amount: "10.0" },
       { participant: accounts[2].address, asset: "ytest.usd", amount: "10.0" },
     ];
-
-    // Get and send a create app session message
     const createAppSessionMessage = await getCreateAppSessionMessage(
       appDefinition,
       initAllocations,
@@ -72,19 +71,37 @@ export async function POST() {
       sendCreateAppSessionMessageResponse.params.appSessionId;
 
     // Get ledger balances
-    const ledgerBalancesBeforeCloseApp = await getLedgerBalances(
+    const ledgerBalancesAfterCreateApp = await getLedgerBalances(
       yellowClients,
       messageSigners,
     );
 
-    // Define final allocations
-    const finalAllocations: RPCAppSessionAllocation[] = [
+    // Send a submit app state message
+    const newAllocations: RPCAppSessionAllocation[] = [
       { participant: accounts[0].address, asset: "ytest.usd", amount: "2.0" },
       { participant: accounts[1].address, asset: "ytest.usd", amount: "9.0" },
       { participant: accounts[2].address, asset: "ytest.usd", amount: "9.0" },
     ];
+    const submitAppStateMessage = await getSubmitAppStateMessage(
+      appSessionId,
+      newAllocations,
+      messageSigners,
+    );
+    const sendSubmitAppStateMessageResponse =
+      await yellowClients[0].sendMessage(submitAppStateMessage);
 
-    // Get and send a close app session message
+    // Get ledger balances
+    const ledgerBalancesAfterSubmitAppState = await getLedgerBalances(
+      yellowClients,
+      messageSigners,
+    );
+
+    // Send a close app session message
+    const finalAllocations: RPCAppSessionAllocation[] = [
+      { participant: accounts[0].address, asset: "ytest.usd", amount: "0.0" },
+      { participant: accounts[1].address, asset: "ytest.usd", amount: "10.0" },
+      { participant: accounts[2].address, asset: "ytest.usd", amount: "10.0" },
+    ];
     const closeAppSessionMessage = await getCloseAppSessionMessage(
       appSessionId,
       finalAllocations,
@@ -106,9 +123,11 @@ export async function POST() {
 
     return createSuccessApiResponse({
       sendCreateAppSessionMessageResponse,
+      sendSubmitAppStateMessageResponse,
       sendCloseAppSessionMessageResponse,
       ledgerBalancesBeforeCreateApp,
-      ledgerBalancesBeforeCloseApp,
+      ledgerBalancesAfterCreateApp,
+      ledgerBalancesAfterSubmitAppState,
       ledgerBalancesAfterCloseApp,
     });
   } catch (error) {
@@ -175,6 +194,30 @@ async function getCreateAppSessionMessage(
   const message = await createCreateAppSessionMessage(messageSigners[0], {
     definition: appDefinition,
     allocations: initAllocations,
+  });
+  const messageJson = JSON.parse(message);
+
+  // Sign the message with the signer 1
+  const signature1 = await messageSigners[1](messageJson.req as RPCData);
+  messageJson.sig.push(signature1);
+
+  // Sign the message with the signer 2
+  const signature2 = await messageSigners[2](messageJson.req as RPCData);
+  messageJson.sig.push(signature2);
+
+  return JSON.stringify(messageJson);
+}
+
+async function getSubmitAppStateMessage(
+  appSessionId: `0x${string}`,
+  newAllocations: RPCAppSessionAllocation[],
+  messageSigners: MessageSigner[],
+): Promise<string> {
+  // Create a message with the signer 0
+  const message = await createSubmitAppStateMessage(messageSigners[0], {
+    app_session_id: appSessionId,
+    allocations: newAllocations,
+    version: 2,
   });
   const messageJson = JSON.parse(message);
 
