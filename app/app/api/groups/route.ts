@@ -112,15 +112,15 @@ export async function POST(request: NextRequest) {
     groupMessages.push({
       id: new ObjectId().toString(),
       created: new Date(),
-      senderAddress: groupAgent.address,
-      senderRole: "agent",
+      creatorAddress: groupAgent.address,
+      creatorRole: "agent",
       content: `${groupUsers[0].ensName} created a group with ${groupAgent.ensName}, ${groupUsers[1].ensName}...`,
     });
     groupMessages.push({
       id: new ObjectId().toString(),
       created: new Date(),
-      senderAddress: groupAgent.address,
-      senderRole: "agent",
+      creatorAddress: groupAgent.address,
+      creatorRole: "agent",
       content: `Sign a message to create an Yellow app session, create app session message: ${yellowCreateAppSessionMessage}`,
       yellowMessage: yellowCreateAppSessionMessage,
     });

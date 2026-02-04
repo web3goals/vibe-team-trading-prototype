@@ -11,8 +11,8 @@ export type GroupUser = {
 export type GroupMessage = {
   id: string;
   created: Date;
-  senderAddress: `0x${string}`;
-  senderRole: "user" | "agent";
+  creatorAddress: `0x${string}`;
+  creatorRole: "user" | "agent";
   content: string;
   yellowMessage?: string;
 };

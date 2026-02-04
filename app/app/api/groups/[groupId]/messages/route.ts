@@ -16,8 +16,8 @@ export async function POST(
 
     // Define the schema for request body validation
     const bodySchema = z.object({
-      senderAddress: z.string(),
-      senderRole: z.enum(["agent", "user"]),
+      creatorAddress: z.string(),
+      creatorRole: z.enum(["agent", "user"]),
       content: z.string(),
       yellowMessage: z.string().optional(),
     });
@@ -39,7 +39,8 @@ export async function POST(
     }
 
     // Extract validated data
-    const { senderAddress, content } = bodyParseResult.data;
+    const { creatorAddress, creatorRole, content, yellowMessage } =
+      bodyParseResult.data;
 
     // Find the group
     const group = await findGroups({ id: groupId }).then((groups) => groups[0]);
@@ -51,10 +52,10 @@ export async function POST(
     group.messages.push({
       id: new ObjectId().toString(),
       created: new Date(),
-      senderAddress: senderAddress as `0x${string}`,
-      senderRole: bodyParseResult.data.senderRole,
+      creatorAddress: creatorAddress as `0x${string}`,
+      creatorRole: creatorRole,
       content: content,
-      yellowMessage: bodyParseResult.data.yellowMessage,
+      yellowMessage: yellowMessage,
     });
 
     await insertOrUpdateGroup(group);

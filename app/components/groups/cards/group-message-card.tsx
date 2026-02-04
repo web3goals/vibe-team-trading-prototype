@@ -54,10 +54,10 @@ export function GroupMessageCard(props: { groupMessage: GroupMessage }) {
           Created: {new Date(props.groupMessage.created).toLocaleString()}
         </p>
         <p className="text-sm text-muted-foreground">
-          Sender role: {props.groupMessage.senderRole}
+          Creator role: {props.groupMessage.creatorRole}
         </p>
         <p className="text-sm text-muted-foreground">
-          Sender address: {props.groupMessage.senderAddress}
+          Creator address: {props.groupMessage.creatorAddress}
         </p>
         <p className="text-sm text-muted-foreground wrap-break-word">
           Content: {props.groupMessage.content}

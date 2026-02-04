@@ -68,8 +68,8 @@ export async function PATCH(
     group.messages.push({
       id: new ObjectId().toString(),
       created: new Date(),
-      senderAddress: zeroAddress,
-      senderRole: "agent",
+      creatorAddress: zeroAddress,
+      creatorRole: "agent",
       content: `Message ${messageId} signed by ${senderEnsName}`,
     });
 

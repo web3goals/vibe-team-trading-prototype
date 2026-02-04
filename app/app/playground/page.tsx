@@ -16,8 +16,8 @@ export default function PlaygroundPage() {
     const message: GroupMessage = {
       id: "6982440b74d49fb886ce5c95",
       created: new Date("2026-02-03T18:52:59.085Z"),
-      senderAddress: "0x818eD0E13030FDE0C86B771a965084e44CC7F8d6",
-      senderRole: "agent",
+      creatorAddress: "0x818eD0E13030FDE0C86B771a965084e44CC7F8d6",
+      creatorRole: "agent",
       content:
         'Sign a message to create an Yellow app session, create app session message: {"req":[1770144788547,"create_app_session",{"definition":{"protocol":"NitroRPC/0.4","participants":["0xB418506A0dd0E6c81B2a2901a8aa2B6F409BFB3f","0x818eD0E13030FDE0C86B771a965084e44CC7F8d6","0x568647a8f0dDc1772E97aDD23c70960138F16330","0x60aef32500a838cb6ef895478606a3d2DC0deD7c"],"weights":[0,25,25,25],"quorum":50,"challenge":0,"nonce":1770144778914,"application":"Test app"},"allocations":[{"participant":"0xB418506A0dd0E6c81B2a2901a8aa2B6F409BFB3f","asset":"ytest.usd","amount":"0.0"},{"participant":"0x818eD0E13030FDE0C86B771a965084e44CC7F8d6","asset":"ytest.usd","amount":"100.0"},{"participant":"0x568647a8f0dDc1772E97aDD23c70960138F16330","asset":"ytest.usd","amount":"100.0"},{"participant":"0x60aef32500a838cb6ef895478606a3d2DC0deD7c","asset":"ytest.usd","amount":"100.0"}]},1770144778914],"sig":["0xfbc40abaf83ae257209c1a5abce3528770defe9e2118c56920dab62a16dfae1836f636520c598820dabe9b5a10195e2d2282fa25235412c40fc68882a7caae2b1c"]}',
       yellowMessage:
