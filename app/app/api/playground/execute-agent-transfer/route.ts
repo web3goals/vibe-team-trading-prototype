@@ -6,6 +6,7 @@ import {
   MessageSigner,
   RPCAppDefinition,
   RPCAppSessionAllocation,
+  RPCAppStateIntent,
   RPCData,
   RPCProtocolVersion,
 } from "@erc7824/nitrolite";
@@ -54,9 +55,9 @@ export async function POST() {
 
     // Send a create app session message
     const initAllocations: RPCAppSessionAllocation[] = [
-      { participant: accounts[0].address, asset: "ytest.usd", amount: "0.0" },
-      { participant: accounts[1].address, asset: "ytest.usd", amount: "10.0" },
-      { participant: accounts[2].address, asset: "ytest.usd", amount: "10.0" },
+      { participant: accounts[0].address, asset: "ytest.usd", amount: "2.0" },
+      { participant: accounts[1].address, asset: "ytest.usd", amount: "9.0" },
+      { participant: accounts[2].address, asset: "ytest.usd", amount: "9.0" },
     ];
     const createAppSessionMessage = await getCreateAppSessionMessage(
       appDefinition,
@@ -78,7 +79,7 @@ export async function POST() {
 
     // Send a submit app state message
     const newAllocations: RPCAppSessionAllocation[] = [
-      { participant: accounts[0].address, asset: "ytest.usd", amount: "2.0" },
+      { participant: accounts[0].address, asset: "ytest.usd", amount: "0.0" },
       { participant: accounts[1].address, asset: "ytest.usd", amount: "9.0" },
       { participant: accounts[2].address, asset: "ytest.usd", amount: "9.0" },
     ];
@@ -218,6 +219,7 @@ async function getSubmitAppStateMessage(
     app_session_id: appSessionId,
     allocations: newAllocations,
     version: 2,
+    intent: RPCAppStateIntent.Withdraw,
   });
   const messageJson = JSON.parse(message);
 
