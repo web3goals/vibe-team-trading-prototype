@@ -3,15 +3,20 @@ import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { confettiConfig } from "@/config/confetti";
 import { handleError } from "@/lib/error";
+import { Group } from "@/mongodb/models/group";
 import { GroupMessage } from "@/types/group";
 import { createECDSAMessageSigner, RPCData } from "@erc7824/nitrolite";
+import axios from "axios";
 import confetti from "canvas-confetti";
 import { SignatureIcon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
-export function GroupMessageCard(props: { groupMessage: GroupMessage }) {
-  const { sessionAccountPrivateKey } = useUser();
+export function GroupMessageCard(props: {
+  group: Group;
+  groupMessage: GroupMessage;
+}) {
+  const { address, sessionAccountPrivateKey } = useUser();
   const [isProcessing, setIsProcessing] = useState(false);
 
   // TODO: Implement
@@ -38,7 +43,14 @@ export function GroupMessageCard(props: { groupMessage: GroupMessage }) {
         yellowMessageJson.req as RPCData,
       );
 
-      console.log({ signature });
+      // Call API to add signature
+      await axios.patch(
+        `/api/groups/${props.group._id.toString()}/messages/${props.groupMessage.id}/yellow-message-signature`,
+        {
+          address: address,
+          signature: signature,
+        },
+      );
 
       confetti({ ...confettiConfig });
       toast.success("Signed");
@@ -64,12 +76,14 @@ export function GroupMessageCard(props: { groupMessage: GroupMessage }) {
         <p className="text-sm text-muted-foreground wrap-break-word">
           Content: {props.groupMessage.content}
         </p>
-        <p className="text-sm text-muted-foreground wrap-break-word">
-          Extra Yellow:{" "}
-          {props.groupMessage.extra?.yellow
-            ? JSON.stringify(props.groupMessage.extra.yellow)
-            : "N/A"}
-        </p>
+        {props.groupMessage.extra?.yellow && (
+          <>
+            <p className="text-sm text-muted-foreground">Extra Yellow:</p>
+            <pre className="text-xs text-muted-foreground bg-muted rounded-md overflow-auto wrap-anywhere p-2">
+              {JSON.stringify(props.groupMessage.extra.yellow, null, 2)}
+            </pre>
+          </>
+        )}
       </div>
       <Button
         disabled={isProcessing}

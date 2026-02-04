@@ -1,11 +1,12 @@
 "use client";
 
 import { useGroup } from "@/hooks/use-group";
-import { Loading } from "../ui-extra/loading";
-import { GroupMessageCard } from "./cards/group-message-card";
-import EntityList from "../ui-extra/entity-list";
 import { GroupMessage } from "@/types/group";
+import EntityList from "../ui-extra/entity-list";
 import EntityListDefaultNoEntitiesCard from "../ui-extra/entity-list-default-no-entities-card";
+import { Loading } from "../ui-extra/loading";
+import { Separator } from "../ui/separator";
+import { GroupMessageCard } from "./cards/group-message-card";
 
 export function Group(props: { id: string }) {
   const { data: group, isLoading: isGroupLoading } = useGroup(props.id);
@@ -18,22 +19,32 @@ export function Group(props: { id: string }) {
     <div className="max-w-xl mx-auto px-4 py-8">
       <div className="flex flex-col gap-2">
         <p className="text-sm text-muted-foreground">ID: {props.id}</p>
-        <p className="text-sm text-muted-foreground wrap-break-word">
-          Agent: {JSON.stringify(group.agent)}
-        </p>
-        <p className="text-sm text-muted-foreground wrap-break-word">
-          Users: {JSON.stringify(group.users)}
+        <p className="text-sm text-muted-foreground wrap-break-word">Agent:</p>
+        <pre className="text-xs text-muted-foreground bg-muted rounded-md overflow-auto p-2">
+          {JSON.stringify(group.agent, null, 2)}
+        </pre>
+        <p className="text-sm text-muted-foreground wrap-break-word">Users:</p>
+        <pre className="text-xs text-muted-foreground bg-muted rounded-md overflow-auto p-2">
+          {JSON.stringify(group.users, null, 2)}
+        </pre>
+        <p className="text-sm text-muted-foreground">
+          Yellow session ID: {group.yellowAppSessionId || "N/A"}
         </p>
       </div>
+      <Separator className="mt-8" />
       <EntityList<GroupMessage>
         entities={group.messages}
         renderEntityCard={(groupMessage, index) => (
-          <GroupMessageCard key={index} groupMessage={groupMessage} />
+          <GroupMessageCard
+            key={index}
+            group={group}
+            groupMessage={groupMessage}
+          />
         )}
         noEntitiesCard={
           <EntityListDefaultNoEntitiesCard noEntitiesText="No data yet, check back later" />
         }
-        className="mt-4"
+        className="mt-8"
       />
     </div>
   );
