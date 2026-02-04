@@ -17,7 +17,7 @@ export async function POST() {
 
     // Prepare private keys
     const privateKeys = [
-      process.env.AGENT_PRIVATE_KEY as `0x${string}`,
+      process.env.AGENT_A_PRIVATE_KEY as `0x${string}`,
       process.env.USER_A_PRIVATE_KEY as `0x${string}`,
       process.env.USER_B_PRIVATE_KEY as `0x${string}`,
       process.env.USER_C_PRIVATE_KEY as `0x${string}`,

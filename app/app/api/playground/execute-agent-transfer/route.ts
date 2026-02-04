@@ -144,7 +144,7 @@ export async function POST() {
 
 async function getAccounts(): Promise<Account[]> {
   const privateKeys = [
-    process.env.AGENT_PRIVATE_KEY,
+    process.env.AGENT_A_PRIVATE_KEY,
     process.env.USER_A_PRIVATE_KEY,
     process.env.USER_B_PRIVATE_KEY,
   ];
