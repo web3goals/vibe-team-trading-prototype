@@ -3,6 +3,7 @@ import { createFailedApiResponse, createSuccessApiResponse } from "@/lib/api";
 import { getErrorString } from "@/lib/error";
 import { authenticateWallet } from "@/lib/yellow";
 import {
+  MessageSigner,
   RPCAppDefinition,
   RPCAppSessionAllocation,
   RPCData,
@@ -13,8 +14,8 @@ import {
   createAppSessionMessage as createCreateAppSessionMessage,
   createECDSAMessageSigner,
 } from "@erc7824/nitrolite/dist/rpc/api";
-import { createWalletClient, http } from "viem";
-import { privateKeyToAccount } from "viem/accounts";
+import { createWalletClient, http, WalletClient } from "viem";
+import { Account, privateKeyToAccount } from "viem/accounts";
 import { sepolia } from "viem/chains";
 import { Client } from "yellow-ts";
 
@@ -22,61 +23,20 @@ export async function POST() {
   try {
     console.log("[API] Executing agent transfer...");
 
-    // Create and connect Yellow clients
-    const yellowClient0 = new Client({ url: yellowConfig.url });
-    const yellowClient1 = new Client({ url: yellowConfig.url });
-    const yellowClient2 = new Client({ url: yellowConfig.url });
-    await yellowClient0.connect();
-    await yellowClient1.connect();
-    await yellowClient2.connect();
-
-    // Create account and wallets
-    const account0 = privateKeyToAccount(
-      process.env.AGENT_PRIVATE_KEY as `0x${string}`,
-    );
-    const account1 = privateKeyToAccount(
-      process.env.USER_A_PRIVATE_KEY as `0x${string}`,
-    );
-    const account2 = privateKeyToAccount(
-      process.env.USER_B_PRIVATE_KEY as `0x${string}`,
-    );
-    const walletClient0 = createWalletClient({
-      account: account0,
-      chain: sepolia,
-      transport: http(),
-    });
-    const walletClient1 = createWalletClient({
-      account: account1,
-      chain: sepolia,
-      transport: http(),
-    });
-    const walletClient2 = createWalletClient({
-      account: account2,
-      chain: sepolia,
-      transport: http(),
-    });
-
-    // Authenticate and get message signers
-    const sessionAccount0 = await authenticateWallet(
-      yellowClient0,
-      walletClient0,
-    );
-    const sessionAccount1 = await authenticateWallet(
-      yellowClient1,
-      walletClient1,
-    );
-    const sessionAccount2 = await authenticateWallet(
-      yellowClient2,
-      walletClient2,
-    );
-    const messageSigner0 = createECDSAMessageSigner(sessionAccount0.privateKey);
-    const messageSigner1 = createECDSAMessageSigner(sessionAccount1.privateKey);
-    const messageSigner2 = createECDSAMessageSigner(sessionAccount2.privateKey);
+    // Prepare accounts and message signers
+    const accounts = await getAccounts();
+    const walletClients = await getWalletClients(accounts);
+    const { yellowClients, messageSigners } =
+      await authenticateWalletClients(walletClients);
 
     // Define the app
     const appDefinition: RPCAppDefinition = {
       protocol: RPCProtocolVersion.NitroRPC_0_4,
-      participants: [account0.address, account1.address, account2.address],
+      participants: [
+        accounts[0].address,
+        accounts[1].address,
+        accounts[2].address,
+      ],
       weights: [0, 50, 50], // Equal voting power
       quorum: 100, // Requires unanimous agreement
       challenge: 0, // No challenge period
@@ -86,74 +46,49 @@ export async function POST() {
 
     // Define initial allocations
     const initAllocations: RPCAppSessionAllocation[] = [
-      { participant: account0.address, asset: "ytest.usd", amount: "0.0" },
-      { participant: account1.address, asset: "ytest.usd", amount: "10.0" },
-      { participant: account2.address, asset: "ytest.usd", amount: "10.0" },
+      { participant: accounts[0].address, asset: "ytest.usd", amount: "0.0" },
+      { participant: accounts[1].address, asset: "ytest.usd", amount: "10.0" },
+      { participant: accounts[2].address, asset: "ytest.usd", amount: "10.0" },
     ];
 
-    // Create open app session message
-    const createAppSessionMessage = await createCreateAppSessionMessage(
-      messageSigner0,
-      {
-        definition: appDefinition,
-        allocations: initAllocations,
-      },
+    // Get and send a create app session message
+    const createAppSessionMessage = await getCreateAppSessionMessage(
+      appDefinition,
+      initAllocations,
+      messageSigners,
     );
-
-    // Sign open app session message with the account 1 and account 2
-    const createAppSessionMessageJson = JSON.parse(createAppSessionMessage);
-    const createSignature1 = await messageSigner1(
-      createAppSessionMessageJson.req as RPCData,
-    );
-    createAppSessionMessageJson.sig.push(createSignature1);
-    const createSignature2 = await messageSigner2(
-      createAppSessionMessageJson.req as RPCData,
-    );
-    createAppSessionMessageJson.sig.push(createSignature2);
-
-    // Send create app session message
-    const sendCreateAppSessionMessageResponse = await yellowClient0.sendMessage(
-      JSON.stringify(createAppSessionMessageJson),
-    );
+    console.log({ createAppSessionMessage });
+    const sendCreateAppSessionMessageResponse =
+      await yellowClients[0].sendMessage(createAppSessionMessage);
     console.log({
       sendCreateAppSessionMessageResponse,
     });
+
     // Save app session ID
     const appSessionId =
       sendCreateAppSessionMessageResponse.params.appSessionId;
 
     // Define final allocations
     const finalAllocations: RPCAppSessionAllocation[] = [
-      { participant: account0.address, asset: "ytest.usd", amount: "2.0" },
-      { participant: account1.address, asset: "ytest.usd", amount: "9.0" },
-      { participant: account2.address, asset: "ytest.usd", amount: "9.0" },
+      { participant: accounts[0].address, asset: "ytest.usd", amount: "2.0" },
+      { participant: accounts[1].address, asset: "ytest.usd", amount: "9.0" },
+      { participant: accounts[2].address, asset: "ytest.usd", amount: "9.0" },
     ];
 
-    // Create close app session message
-    const closeAppSessionMessage = await createCloseAppSessionMessage(
-      messageSigner0,
-      {
-        app_session_id: appSessionId,
-        allocations: finalAllocations,
-      },
+    // Get and send a close app session message
+    const closeAppSessionMessage = await getCloseAppSessionMessage(
+      appSessionId,
+      finalAllocations,
+      messageSigners,
     );
-
-    // Sign close app session message with the second account
-    const closeAppSessionMessageJson = JSON.parse(closeAppSessionMessage);
-    const closeSignature1 = await messageSigner1(
-      closeAppSessionMessageJson.req as RPCData,
-    );
-    closeAppSessionMessageJson.sig.push(closeSignature1);
-    const closeSignature2 = await messageSigner2(
-      closeAppSessionMessageJson.req as RPCData,
-    );
-    closeAppSessionMessageJson.sig.push(closeSignature2);
-
-    // Send close app session message
-    const sendCloseAppSessionMessageResponse = await yellowClient1.sendMessage(
-      JSON.stringify(closeAppSessionMessageJson),
-    );
+    const sendCloseAppSessionMessageResponse =
+      await yellowClients[0].sendMessage(closeAppSessionMessage);
     console.log({ sendCloseAppSessionMessageResponse });
+
+    // Close the yellow clients
+    for (const yellowClient of yellowClients) {
+      await yellowClient.disconnect();
+    }
 
     return createSuccessApiResponse({
       sendCreateAppSessionMessageResponse,
@@ -168,4 +103,94 @@ export async function POST() {
       500,
     );
   }
+}
+
+async function getAccounts(): Promise<Account[]> {
+  const privateKeys = [
+    process.env.AGENT_PRIVATE_KEY,
+    process.env.USER_A_PRIVATE_KEY,
+    process.env.USER_B_PRIVATE_KEY,
+  ];
+
+  return privateKeys.map((privateKey) =>
+    privateKeyToAccount(privateKey as `0x${string}`),
+  );
+}
+
+async function getWalletClients(accounts: Account[]): Promise<WalletClient[]> {
+  return accounts.map((account) =>
+    createWalletClient({
+      account: account,
+      chain: sepolia,
+      transport: http(),
+    }),
+  );
+}
+
+async function authenticateWalletClients(
+  walletClients: WalletClient[],
+): Promise<{ yellowClients: Client[]; messageSigners: MessageSigner[] }> {
+  const yellowClients: Client[] = [];
+  const messageSigners: MessageSigner[] = [];
+  for (const walletClient of walletClients) {
+    // Create a new Yellow client for each account to avoid listener conflicts
+    const yellowClient = new Client({ url: yellowConfig.url });
+    await yellowClient.connect();
+
+    // Authenticate and get message signer
+    const sessionAccount = await authenticateWallet(yellowClient, walletClient);
+    const messageSigner = createECDSAMessageSigner(sessionAccount.privateKey);
+
+    // Push the yellow client and message signer to the arrays
+    yellowClients.push(yellowClient);
+    messageSigners.push(messageSigner);
+  }
+
+  return { yellowClients, messageSigners };
+}
+
+async function getCreateAppSessionMessage(
+  appDefinition: RPCAppDefinition,
+  initAllocations: RPCAppSessionAllocation[],
+  messageSigners: MessageSigner[],
+): Promise<string> {
+  // Create a message with the signer 0
+  const message = await createCreateAppSessionMessage(messageSigners[0], {
+    definition: appDefinition,
+    allocations: initAllocations,
+  });
+  const messageJson = JSON.parse(message);
+
+  // Sign the message with the signer 1
+  const signature1 = await messageSigners[1](messageJson.req as RPCData);
+  messageJson.sig.push(signature1);
+
+  // Sign the message with the signer 2
+  const signature2 = await messageSigners[2](messageJson.req as RPCData);
+  messageJson.sig.push(signature2);
+
+  return JSON.stringify(messageJson);
+}
+
+async function getCloseAppSessionMessage(
+  appSessionId: `0x${string}`,
+  finalAllocations: RPCAppSessionAllocation[],
+  messageSigners: MessageSigner[],
+): Promise<string> {
+  // Create a message with the signer 0
+  const message = await createCloseAppSessionMessage(messageSigners[0], {
+    app_session_id: appSessionId,
+    allocations: finalAllocations,
+  });
+  const messageJson = JSON.parse(message);
+
+  // Sign the message with the signer 1
+  const signature1 = await messageSigners[1](messageJson.req as RPCData);
+  messageJson.sig.push(signature1);
+
+  // Sign the message with the signer 2
+  const signature2 = await messageSigners[2](messageJson.req as RPCData);
+  messageJson.sig.push(signature2);
+
+  return JSON.stringify(messageJson);
 }
