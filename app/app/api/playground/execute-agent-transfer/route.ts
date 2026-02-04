@@ -23,7 +23,7 @@ export async function POST() {
   try {
     console.log("[API] Executing agent transfer...");
 
-    // Prepare accounts and message signers
+    // Prepare account, yellow clients, and message signers
     const accounts = await getAccounts();
     const walletClients = await getWalletClients(accounts);
     const { yellowClients, messageSigners } =
