@@ -1,6 +1,6 @@
 export const demoConfig = {
-  agent: {
-    ensName: "agent.eth",
+  agentA: {
+    ensName: "agent-a.eth",
     address: "0xB418506A0dd0E6c81B2a2901a8aa2B6F409BFB3f",
   },
   userA: {

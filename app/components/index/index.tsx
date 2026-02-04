@@ -1,6 +1,8 @@
 "use client";
 
-import { GroupCreateButton } from "@/components/buttons/group-create-button";
+import { GroupCreateButton } from "../groups/buttons/group-create-button";
+import { GroupList } from "../groups/lists/group-list";
+import { Separator } from "../ui/separator";
 
 export function Index() {
   return (
@@ -18,6 +20,9 @@ export function Index() {
       <div className="flex flex-col items-center gap-4 mt-4">
         <GroupCreateButton />
       </div>
+      {/* Groups */}
+      <Separator className="mt-8" />
+      <GroupList className="mt-8" />
     </div>
   );
 }

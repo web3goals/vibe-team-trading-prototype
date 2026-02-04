@@ -1,4 +1,16 @@
 import axios from "axios";
+import { toast } from "sonner";
+
+export function handleError(args: {
+  error: unknown;
+  toastTitle?: string;
+  toastMessage?: string;
+}) {
+  console.error("[Error]", args.error);
+  toast.error(args.toastTitle || "Something went wrong", {
+    description: args.toastMessage || getErrorString(args.error),
+  });
+}
 
 export function getErrorString(error: unknown): string {
   if (axios.isAxiosError(error)) {
