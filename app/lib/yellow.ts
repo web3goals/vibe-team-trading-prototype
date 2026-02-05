@@ -1,5 +1,5 @@
 import { yellowConfig } from "@/config/yellow";
-import { SessionAccount } from "@/types/yellow";
+import { YellowSessionAccount } from "@/types/yellow";
 import {
   createAuthRequestMessage,
   createAuthVerifyMessage,
@@ -11,7 +11,7 @@ import { WalletClient } from "viem";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import { Client } from "yellow-ts";
 
-export function generateSessionAccount(): SessionAccount {
+export function generateSessionAccount(): YellowSessionAccount {
   const privateKey = generatePrivateKey();
   const account = privateKeyToAccount(privateKey);
   return { privateKey, address: account.address };
@@ -20,7 +20,7 @@ export function generateSessionAccount(): SessionAccount {
 export async function authenticateWallet(
   yellowClient: Client,
   walletClient: WalletClient,
-): Promise<SessionAccount> {
+): Promise<YellowSessionAccount> {
   const sessionAccount = generateSessionAccount();
   const sessionExpiresAt = BigInt(
     Math.floor(Date.now() / 1000) + yellowConfig.sessionDuration,

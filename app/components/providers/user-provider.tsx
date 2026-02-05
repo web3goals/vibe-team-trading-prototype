@@ -1,9 +1,9 @@
 "use client";
 
-import { SessionAccount } from "@/types/yellow";
+import { YellowSessionAccount } from "@/types/yellow";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, ReactNode, useContext, useState } from "react";
 
 type UserState = {
   address: string | undefined;
@@ -40,13 +40,13 @@ export function UserProvider({ children }: { children: ReactNode }) {
         address,
       });
       return {
-        sessionAccount: data.data.sessionAccount as SessionAccount,
+        sessionAccount: data.data.sessionAccount as YellowSessionAccount,
         address,
         ensName,
       };
     },
     onSuccess: (data: {
-      sessionAccount: SessionAccount;
+      sessionAccount: YellowSessionAccount;
       address: string;
       ensName: string;
     }) => {
