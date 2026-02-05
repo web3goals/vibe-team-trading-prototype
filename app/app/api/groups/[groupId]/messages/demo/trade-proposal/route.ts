@@ -40,6 +40,7 @@ export async function POST(
     ];
 
     // Create Yellow submit app state message signed by the agent
+    // TODO: Calculate version based on previous state
     const yellowMessageSigner = await getAgentYellowMessageSigner(
       group.agent.address,
     );
