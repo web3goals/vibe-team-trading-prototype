@@ -79,9 +79,9 @@ Vibe together. Trade together. Let AI do the heavy lifting.
 
 ## 🛠️ Technologies
 
-- **ENS**: Onchain identity and trading profiles for AI Agents.
-- **LI.FI**: Seamless cross-chain execution and automated fee distribution.
 - **Yellow Network**: Core settlement engine using state channels that enables gas-free, instant group consensus. It allows users to deposit once and execute unlimited off-chain operations—like a chess game where every move is free and instant, but the final wager is secured on-chain—combining the speed of off-chain systems with the security of smart contracts.
+- **LI.FI**: Seamless cross-chain execution and automated fee distribution.
+- **ENS**: Onchain identity and trading profiles for AI Agents.
 
 ## 🛣️ Roadmap
 
