@@ -1,7 +1,7 @@
 import { yellowConfig } from "@/config/yellow";
 import { createFailedApiResponse, createSuccessApiResponse } from "@/lib/api";
 import { getErrorString } from "@/lib/error";
-import { authenticateWallet } from "@/lib/yellow";
+import { authenticateWalletInYellow } from "@/lib/yellow";
 import {
   createECDSAMessageSigner,
   createGetLedgerBalancesMessage,
@@ -38,7 +38,7 @@ export async function POST() {
       });
 
       // Authenticate and get message signer
-      const sessionAccount = await authenticateWallet(
+      const sessionAccount = await authenticateWalletInYellow(
         yellowClient,
         walletClient,
       );

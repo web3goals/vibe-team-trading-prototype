@@ -5,7 +5,7 @@ import { createWalletClient, getAddress, http } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { sepolia } from "viem/chains";
 import { Client } from "yellow-ts";
-import { authenticateWallet } from "./yellow";
+import { authenticateWalletInYellow } from "./yellow";
 
 export function getAgentPrivateKey(
   agentAddress: `0x${string}`,
@@ -44,7 +44,7 @@ export async function sendYellowMessageByAgent(
   const yellowClient = new Client({ url: yellowConfig.url });
   await yellowClient.connect();
 
-  await authenticateWallet(yellowClient, agentWalletClient);
+  await authenticateWalletInYellow(yellowClient, agentWalletClient);
 
   const yellowResponse = await yellowClient.sendMessage(yellowMessage);
 

@@ -2,7 +2,7 @@ import { demoConfig } from "@/config/demo";
 import { yellowConfig } from "@/config/yellow";
 import { createFailedApiResponse, createSuccessApiResponse } from "@/lib/api";
 import { getErrorString } from "@/lib/error";
-import { authenticateWallet } from "@/lib/yellow";
+import { authenticateWalletInYellow } from "@/lib/yellow";
 import { NextRequest } from "next/dist/server/web/spec-extension/request";
 import { createWalletClient, getAddress, http } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
@@ -66,7 +66,10 @@ export async function POST(request: NextRequest) {
     });
 
     // Authenticate wallet and get session account
-    const sessionAccount = await authenticateWallet(yellowClient, walletClient);
+    const sessionAccount = await authenticateWalletInYellow(
+      yellowClient,
+      walletClient,
+    );
 
     return createSuccessApiResponse({ sessionAccount });
   } catch (error) {

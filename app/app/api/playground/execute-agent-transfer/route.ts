@@ -1,7 +1,7 @@
 import { yellowConfig } from "@/config/yellow";
 import { createFailedApiResponse, createSuccessApiResponse } from "@/lib/api";
 import { getErrorString } from "@/lib/error";
-import { authenticateWallet } from "@/lib/yellow";
+import { authenticateWalletInYellow } from "@/lib/yellow";
 import {
   MessageSigner,
   RPCAppDefinition,
@@ -175,7 +175,10 @@ async function authenticateWalletClients(
     await yellowClient.connect();
 
     // Authenticate and get message signer
-    const sessionAccount = await authenticateWallet(yellowClient, walletClient);
+    const sessionAccount = await authenticateWalletInYellow(
+      yellowClient,
+      walletClient,
+    );
     const messageSigner = createECDSAMessageSigner(sessionAccount.privateKey);
 
     // Push the yellow client and message signer to the arrays

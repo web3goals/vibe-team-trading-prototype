@@ -11,17 +11,17 @@ import { WalletClient } from "viem";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import { Client } from "yellow-ts";
 
-export function generateSessionAccount(): YellowSessionAccount {
+export function generateYellowSessionAccount(): YellowSessionAccount {
   const privateKey = generatePrivateKey();
   const account = privateKeyToAccount(privateKey);
   return { privateKey, address: account.address };
 }
 
-export async function authenticateWallet(
+export async function authenticateWalletInYellow(
   yellowClient: Client,
   walletClient: WalletClient,
 ): Promise<YellowSessionAccount> {
-  const sessionAccount = generateSessionAccount();
+  const sessionAccount = generateYellowSessionAccount();
   const sessionExpiresAt = BigInt(
     Math.floor(Date.now() / 1000) + yellowConfig.sessionDuration,
   );
