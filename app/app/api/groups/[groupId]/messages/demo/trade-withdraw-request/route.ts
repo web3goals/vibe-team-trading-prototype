@@ -44,13 +44,12 @@ export async function POST(
     const yellowMessageSigner = await getAgentYellowMessageSigner(
       group.agent.address,
     );
-    // TODO: Calculate version based on previous state
     const yellowMessage = await createSubmitAppStateMessage(
       yellowMessageSigner,
       {
         app_session_id: group.yellowAppSessionId as `0x${string}`,
         allocations: yellowAppAllocations,
-        version: 3,
+        version: (group.yellowAppVersion as number) + 1,
         intent: RPCAppStateIntent.Withdraw,
       },
     );

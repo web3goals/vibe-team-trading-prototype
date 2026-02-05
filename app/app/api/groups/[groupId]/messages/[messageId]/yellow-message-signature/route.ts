@@ -68,10 +68,13 @@ export async function PATCH(
     message.extra.yellow.response = JSON.stringify(yellowResponse);
     message.extra.yellow.responseCreated = new Date();
 
-    // Save Yellow app session ID if created
+    // Save Yellow app session ID, version to the group
     const yellowResponseJson = JSON.parse(message.extra.yellow.response);
-    if (yellowResponseJson.method === "create_app_session") {
+    if (yellowResponseJson.params.appSessionId) {
       group.yellowAppSessionId = yellowResponseJson.params.appSessionId;
+    }
+    if (yellowResponseJson.params.version) {
+      group.yellowAppVersion = yellowResponseJson.params.version;
     }
 
     // Update the group in the database

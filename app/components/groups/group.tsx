@@ -27,10 +27,13 @@ export function Group(props: { id: string }) {
         <pre className="text-xs text-muted-foreground bg-muted rounded-md whitespace-pre-wrap break-all p-2">
           {JSON.stringify(group.users, null, 2)}
         </pre>
-        <p className="text-sm text-muted-foreground">Yellow session ID:</p>
+        <p className="text-sm text-muted-foreground">Yellow app session ID:</p>
         <pre className="text-xs text-muted-foreground bg-muted rounded-md whitespace-pre-wrap break-all p-2">
           {group.yellowAppSessionId || "N/A"}
         </pre>
+        <p className="text-sm text-muted-foreground">
+          Yellow app version: {group.yellowAppVersion || "N/A"}
+        </p>
       </div>
       <Separator className="mt-8" />
       <EntityList<GroupMessage>

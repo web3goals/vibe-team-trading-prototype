@@ -12,5 +12,6 @@ export class Group {
     public messages: GroupMessage[],
     public yellowAppDefinition: RPCAppDefinition,
     public yellowAppSessionId?: string,
+    public yellowAppVersion?: number,
   ) {}
 }
