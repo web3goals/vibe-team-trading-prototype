@@ -129,12 +129,12 @@ export async function POST(request: NextRequest) {
       {
         participant: agent.address,
         asset: "ytest.usd",
-        amount: "0.0",
+        amount: Number(0).toString(),
       },
       ...users.map((user) => ({
         participant: user.address,
         asset: "ytest.usd",
-        amount: "10.0",
+        amount: Number(10).toString(),
       })),
     ];
 
@@ -142,7 +142,7 @@ export async function POST(request: NextRequest) {
     const yellowMessageSigner = await getAgentYellowMessageSigner(
       agent.address,
     );
-    const yellowCreateAppSessionMessage = await createCreateAppSessionMessage(
+    const yellowMessage = await createCreateAppSessionMessage(
       yellowMessageSigner,
       {
         definition: yellowAppDefinition,
@@ -162,7 +162,7 @@ export async function POST(request: NextRequest) {
         `Sign a message to create a Yellow app session`,
       extra: {
         yellow: {
-          message: yellowCreateAppSessionMessage,
+          message: yellowMessage,
           messageCreated: new Date(),
           messageSignerAddresses: [agent.address],
         },
