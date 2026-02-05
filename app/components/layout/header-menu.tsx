@@ -66,7 +66,7 @@ export function HeaderMenu() {
         <Button variant="ghost" className="flex items-center gap-2">
           <Avatar className="size-6">
             <AvatarImage
-              src={`https://api.dicebear.com/9.x/notionists/svg?seed=${ensName}&backgroundColor=ffffff`}
+              src={`https://api.dicebear.com/9.x/notionists/svg?seed=${ensName}&backgroundColor=1e293b`}
             />
             <AvatarFallback>{ensName?.[0]?.toUpperCase()}</AvatarFallback>
           </Avatar>
