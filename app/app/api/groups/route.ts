@@ -1,12 +1,11 @@
-import { demoConfig } from "@/config/demo";
 import { yellowConfig } from "@/config/yellow";
+import { getAgentYellowMessageSigner } from "@/lib/agent";
 import { createFailedApiResponse, createSuccessApiResponse } from "@/lib/api";
 import { getErrorString } from "@/lib/error";
 import { Group } from "@/mongodb/models/group";
 import { findGroups, insertOrUpdateGroup } from "@/mongodb/services/group";
 import { GroupAgent, GroupMessage, GroupUser } from "@/types/group";
 import {
-  createECDSAMessageSigner,
   RPCAppDefinition,
   RPCAppSessionAllocation,
   RPCProtocolVersion,
@@ -14,7 +13,6 @@ import {
 import { createAppSessionMessage as createCreateAppSessionMessage } from "@erc7824/nitrolite/dist/rpc/api";
 import { ObjectId } from "mongodb";
 import { NextRequest } from "next/server";
-import { getAddress } from "viem";
 import z from "zod";
 
 export async function GET(request: NextRequest) {
@@ -140,21 +138,10 @@ export async function POST(request: NextRequest) {
       })),
     ];
 
-    // Define Yellow message signer for agent
-    let agentPrivateKey;
-    if (
-      getAddress(agent.address) === getAddress(demoConfig.groupAgentA.address)
-    ) {
-      agentPrivateKey = process.env.AGENT_A_PRIVATE_KEY;
-    }
-    if (!agentPrivateKey) {
-      throw new Error("Agent private key not found for signing");
-    }
-    const yellowMessageSigner = createECDSAMessageSigner(
-      agentPrivateKey as `0x${string}`,
+    // Create Yellow create app session message signed by the agent
+    const yellowMessageSigner = await getAgentYellowMessageSigner(
+      agent.address,
     );
-
-    // Create Yellow create app session message
     const yellowCreateAppSessionMessage = await createCreateAppSessionMessage(
       yellowMessageSigner,
       {
@@ -171,8 +158,8 @@ export async function POST(request: NextRequest) {
       creatorAddress: agent.address,
       creatorRole: "agent",
       content:
-        `Created a group with ${agent.ensName}...\n\n` +
-        `Sign a message to create an Yellow app session`,
+        `Created a group with ${agent.ensName} and others...\n\n` +
+        `Sign a message to create a Yellow app session`,
       extra: {
         yellow: {
           message: yellowCreateAppSessionMessage,

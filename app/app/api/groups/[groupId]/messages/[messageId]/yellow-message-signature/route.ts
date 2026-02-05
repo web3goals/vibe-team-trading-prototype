@@ -1,14 +1,8 @@
-import { demoConfig } from "@/config/demo";
-import { yellowConfig } from "@/config/yellow";
+import { sendYellowMessageByAgent } from "@/lib/agent";
 import { createFailedApiResponse, createSuccessApiResponse } from "@/lib/api";
 import { getErrorString } from "@/lib/error";
-import { authenticateWallet } from "@/lib/yellow";
 import { findGroups, insertOrUpdateGroup } from "@/mongodb/services/group";
 import { NextRequest } from "next/server";
-import { createWalletClient, getAddress, http } from "viem";
-import { privateKeyToAccount } from "viem/accounts";
-import { sepolia } from "viem/chains";
-import { Client } from "yellow-ts";
 import z from "zod";
 
 export async function PATCH(
@@ -51,7 +45,7 @@ export async function PATCH(
       throw new Error(`Group not found with id: ${groupId}`);
     }
 
-    // Find the message
+    // Find the Yellow message
     const message = group.messages.find((msg) => msg.id === messageId);
     if (!message) {
       throw new Error(`Message not found with id: ${messageId}`);
@@ -60,42 +54,19 @@ export async function PATCH(
       throw new Error(`Message does not have a Yellow message: ${messageId}`);
     }
 
-    // Add signature to the message
+    // Add signature to the Yellow message
     const yellowMessageJson = JSON.parse(message.extra.yellow.message);
     yellowMessageJson.sig.push(signature);
     message.extra.yellow.message = JSON.stringify(yellowMessageJson);
     message.extra.yellow.messageSignerAddresses.push(address as `0x${string}`);
 
-    // Define agent wallet client to send the message to Yellow network
-    let agentPrivateKey;
-    if (
-      getAddress(group.agent.address) ===
-      getAddress(demoConfig.groupAgentA.address)
-    ) {
-      agentPrivateKey = process.env.AGENT_A_PRIVATE_KEY;
-    }
-    if (!agentPrivateKey) {
-      throw new Error("Agent private key not found for sending Yellow message");
-    }
-    const agentAccount = privateKeyToAccount(
-      process.env.AGENT_A_PRIVATE_KEY as `0x${string}`,
-    );
-    const agentWalletClient = createWalletClient({
-      account: agentAccount,
-      chain: sepolia,
-      transport: http(),
-    });
-
-    // Send the message to the Yellow network and save response
-    const yellowClient = new Client({ url: yellowConfig.url });
-    await yellowClient.connect();
-    await authenticateWallet(yellowClient, agentWalletClient);
-    const yellowResponse = await yellowClient.sendMessage(
+    // Send the Yellow message to the Yellow network by agent and save response
+    const yellowResponse = await sendYellowMessageByAgent(
+      group.agent.address,
       message.extra.yellow.message,
     );
     message.extra.yellow.response = JSON.stringify(yellowResponse);
     message.extra.yellow.responseCreated = new Date();
-    yellowClient.disconnect();
 
     // Save Yellow app session ID to the group if applicable
     const yellowResponseJson = JSON.parse(message.extra.yellow.response);
