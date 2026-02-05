@@ -33,7 +33,7 @@ export function Group(props: { id: string }) {
       </div>
       <Separator className="mt-8" />
       <EntityList<GroupMessage>
-        entities={group.messages}
+        entities={[...group.messages].reverse()}
         renderEntityCard={(groupMessage, index) => (
           <GroupMessageCard
             key={index}
