@@ -13,6 +13,9 @@ export function getAgentPrivateKey(
   if (getAddress(agentAddress) === getAddress(demoConfig.groupAgentA.address)) {
     return process.env.AGENT_A_PRIVATE_KEY;
   }
+  if (getAddress(agentAddress) === getAddress(demoConfig.groupAgentB.address)) {
+    return process.env.AGENT_B_PRIVATE_KEY;
+  }
   return undefined;
 }
 
