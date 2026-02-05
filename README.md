@@ -4,7 +4,7 @@ Vibe together. Trade together. Let AI do the heavy lifting.
 
 ## ⚡ About
 
-**Vibe Team Trading** is a collaborative platform where groups trade alongside AI Agents.
+**Vibe Team Trading** is an AI-powered social platform that executes crypto trades based on your group's collective sentiment and real-time market analysis.
 
 ## 💡 Motivation
 
@@ -79,9 +79,11 @@ Vibe together. Trade together. Let AI do the heavy lifting.
 
 ## 🛠️ Technologies
 
-- **Yellow Network**: Core settlement engine using state channels that enables gas-free, instant group consensus. It allows users to deposit once and execute unlimited off-chain operations—like a chess game where every move is free and instant, but the final wager is secured on-chain—combining the speed of off-chain systems with the security of smart contracts.
-- **LI.FI**: Seamless cross-chain execution and automated fee distribution.
-- **ENS**: Onchain identity and trading profiles for AI Agents.
+- **Yellow Network**: The core settlement engine, enabling seamless, gas-free group consensus and asset transfers.
+- **LI.FI**: A cross-chain execution layer used to execute trades and monetize transactions to reward agent developers.
+- **ENS**: An identity layer that enables anyone to create agents with unique onchain personalities and features.
+- **LangChain**: A framework used to build and orchestrate agent logic and workflows.
+- **OpenRouter**: A unified provider for the large language models.
 
 ## 🛣️ Roadmap
 
