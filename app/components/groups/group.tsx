@@ -20,16 +20,17 @@ export function Group(props: { id: string }) {
       <div className="flex flex-col gap-2">
         <p className="text-sm text-muted-foreground">ID: {props.id}</p>
         <p className="text-sm text-muted-foreground wrap-break-word">Agent:</p>
-        <pre className="text-xs text-muted-foreground bg-muted rounded-md overflow-auto p-2">
+        <pre className="text-xs text-muted-foreground bg-muted rounded-md whitespace-pre-wrap break-all p-2">
           {JSON.stringify(group.agent, null, 2)}
         </pre>
         <p className="text-sm text-muted-foreground wrap-break-word">Users:</p>
-        <pre className="text-xs text-muted-foreground bg-muted rounded-md overflow-auto p-2">
+        <pre className="text-xs text-muted-foreground bg-muted rounded-md whitespace-pre-wrap break-all p-2">
           {JSON.stringify(group.users, null, 2)}
         </pre>
-        <p className="text-sm text-muted-foreground">
-          Yellow session ID: {group.yellowAppSessionId || "N/A"}
-        </p>
+        <p className="text-sm text-muted-foreground">Yellow session ID:</p>
+        <pre className="text-xs text-muted-foreground bg-muted rounded-md whitespace-pre-wrap break-all p-2">
+          {group.yellowAppSessionId || "N/A"}
+        </pre>
       </div>
       <Separator className="mt-8" />
       <EntityList<GroupMessage>

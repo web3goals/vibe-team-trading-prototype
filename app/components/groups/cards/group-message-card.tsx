@@ -79,7 +79,7 @@ export function GroupMessageCard(props: {
         {props.groupMessage.extra?.yellow && (
           <>
             <p className="text-sm text-muted-foreground">Extra Yellow:</p>
-            <pre className="text-xs text-muted-foreground bg-muted rounded-md overflow-auto wrap-anywhere p-2">
+            <pre className="text-xs text-muted-foreground bg-muted rounded-md whitespace-pre-wrap break-all p-2">
               {JSON.stringify(props.groupMessage.extra.yellow, null, 2)}
             </pre>
           </>
