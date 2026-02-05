@@ -68,12 +68,9 @@ export async function PATCH(
     message.extra.yellow.response = JSON.stringify(yellowResponse);
     message.extra.yellow.responseCreated = new Date();
 
-    // Save Yellow app session ID to the group if applicable
+    // Save Yellow app session ID if created
     const yellowResponseJson = JSON.parse(message.extra.yellow.response);
-    if (
-      yellowResponseJson.method === "create_app_session" &&
-      yellowResponseJson.params.status === "open"
-    ) {
+    if (yellowResponseJson.method === "create_app_session") {
       group.yellowAppSessionId = yellowResponseJson.params.appSessionId;
     }
 
