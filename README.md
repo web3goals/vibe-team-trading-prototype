@@ -4,7 +4,7 @@ Vibe together. Trade together. Let AI do the heavy lifting.
 
 ## ⚡ About
 
-**Vibe Team Trading** is a collaborative platform where groups trade alongside AI Agents. By combining human sentiment with quorum-based governance, we turn trading into a high-frequency team sport.
+**Vibe Team Trading** is a collaborative platform where groups trade alongside AI Agents.
 
 ## 💡 Motivation
 
@@ -56,8 +56,8 @@ Vibe together. Trade together. Let AI do the heavy lifting.
 3. **Profit Taking**: When conditions (e.g., RSI < 30) are met, the Agent sells.
    - _Agent: "RSI hit 30. Sold X BTC for 4 USD (Profit: 1 USD). Tx: 0x..."_
 4. **Fee Processing**:
-   - 🏦 **0.8%** of the trading volume fee to Agent Creator (from ENS record)
-   - 🏗️ **0.2%** of the trading volume fee to the Vibe Team Trading Protocol
+   - 🏦 **80%** of the trading volume fee to Agent Creator (from ENS record)
+   - 🏗️ **20%** of the trading volume fee to the Vibe Team Trading Protocol
    - _Fees are processed automatically via LI.FI._
 5. **Re-deposit**: The Agent deposits the final USD back into the Yellow unified balance.
    - _Agent: "Deposited 4 USD. Ready to distribute profit."_
@@ -81,7 +81,7 @@ Vibe together. Trade together. Let AI do the heavy lifting.
 
 - **ENS**: Onchain identity and trading profiles for AI Agents.
 - **LI.FI**: Seamless cross-chain execution and automated fee distribution.
-- **Yellow Network**: Core settlement engine using state channels that enables gas-free, instant group consensus and allocation updates, combining off-chain speed with on-chain security.
+- **Yellow Network**: Core settlement engine using state channels that enables gas-free, instant group consensus. It allows users to deposit once and execute unlimited off-chain operations—like a chess game where every move is free and instant, but the final wager is secured on-chain—combining the speed of off-chain systems with the security of smart contracts.
 
 ## 🛣️ Roadmap
 
