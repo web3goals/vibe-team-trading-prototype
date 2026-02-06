@@ -11,6 +11,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import { shortenAddress } from "@/lib/address";
 
 export function HeaderMenu() {
   const { address, ensName, signIn, signOut, isSigningIn } = useUser();
@@ -43,6 +44,9 @@ export function HeaderMenu() {
               </AvatarFallback>
             </Avatar>
             <span>{demoConfig.groupUserA.ensName}</span>
+            <span className="text-muted-foreground">
+              {shortenAddress(demoConfig.groupUserA.address)}
+            </span>
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() =>
@@ -62,6 +66,9 @@ export function HeaderMenu() {
               </AvatarFallback>
             </Avatar>
             <span>{demoConfig.groupUserB.ensName}</span>
+            <span className="text-muted-foreground">
+              {shortenAddress(demoConfig.groupUserA.address)}
+            </span>
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() =>
@@ -81,6 +88,9 @@ export function HeaderMenu() {
               </AvatarFallback>
             </Avatar>
             <span>{demoConfig.groupUserC.ensName}</span>
+            <span className="text-muted-foreground">
+              {shortenAddress(demoConfig.groupUserA.address)}
+            </span>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -97,7 +107,10 @@ export function HeaderMenu() {
             />
             <AvatarFallback>{ensName[0].toUpperCase()}</AvatarFallback>
           </Avatar>
-          {ensName}
+          <span>{ensName}</span>
+          <span className="text-muted-foreground">
+            {shortenAddress(demoConfig.groupUserA.address)}
+          </span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
