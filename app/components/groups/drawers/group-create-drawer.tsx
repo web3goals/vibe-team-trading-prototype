@@ -10,25 +10,53 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
+import { Textarea } from "@/components/ui/textarea";
 import { confettiConfig } from "@/config/confetti";
 import { demoConfig } from "@/config/demo";
 import { handleError } from "@/lib/error";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import confetti from "canvas-confetti";
 import { UsersRoundIcon } from "lucide-react";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { z } from "zod";
 
-// TODO: Implement
 export function GroupCreateDrawer() {
   const [isOpen, setIsOpen] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const queryClient = useQueryClient();
   const { address, ensName } = useUser();
 
-  async function handleCreateGroup() {
+  const formSchema = z.object({
+    name: z.string().min(1, "Name cannot be empty").max(50, "Name is too long"),
+    description: z
+      .string()
+      .min(1, "Description cannot be empty")
+      .max(200, "Description is too long"),
+  });
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: "",
+      description: "",
+    },
+  });
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       console.log("[Component] Creating group...");
       setIsProcessing(true);
@@ -40,8 +68,8 @@ export function GroupCreateDrawer() {
 
       // Call create group API
       await axios.post("/api/groups", {
-        name: "Degens",
-        description: "Where degens become legends or get rekt trying",
+        name: values.name,
+        description: values.description,
         agent: demoConfig.groupAgentA,
         users: [demoConfig.groupUserA, demoConfig.groupUserB],
       });
@@ -50,6 +78,7 @@ export function GroupCreateDrawer() {
       queryClient.invalidateQueries({ queryKey: ["groups"] });
 
       setIsOpen(false);
+      form.reset();
       confetti({ ...confettiConfig });
       toast.success("Created");
     } catch (error) {
@@ -66,6 +95,7 @@ export function GroupCreateDrawer() {
       onOpenChange={(open) => {
         if (!isProcessing) {
           setIsOpen(open);
+          form.reset();
         }
       }}
     >
@@ -82,17 +112,50 @@ export function GroupCreateDrawer() {
             Vibe together, trade together, and let AI do the heavy lifting
           </DrawerDescription>
         </DrawerHeader>
-        <div className="flex-1 overflow-y-auto px-4">
-          <p>...</p>
-        </div>
-        <DrawerFooter>
-          <Button disabled={isProcessing} onClick={() => handleCreateGroup()}>
-            {isProcessing && <Spinner />} Create
-          </Button>
-          <DrawerClose asChild>
-            <Button variant="outline">Close</Button>
-          </DrawerClose>
-        </DrawerFooter>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <div className="flex-1 overflow-y-auto px-4 space-y-4">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter group name" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Describe your group"
+                        className="resize-none"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <DrawerFooter>
+              <Button type="submit" disabled={isProcessing}>
+                {isProcessing && <Spinner />} Create
+              </Button>
+              <DrawerClose asChild>
+                <Button variant="outline">Close</Button>
+              </DrawerClose>
+            </DrawerFooter>
+          </form>
+        </Form>
       </DrawerContent>
     </Drawer>
   );
