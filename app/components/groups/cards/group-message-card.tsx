@@ -62,7 +62,7 @@ export function GroupMessageCard(props: {
                     target="_blank"
                   >
                     <Button variant="outline">
-                      <SquareArrowOutUpRightIcon /> Transaction
+                      <SquareArrowOutUpRightIcon /> LI.FI Transaction
                     </Button>
                   </Link>
                 )}
