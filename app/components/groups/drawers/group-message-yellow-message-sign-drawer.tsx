@@ -114,6 +114,13 @@ export function GroupMessageYellowMessageSignDrawer(props: {
               2,
             )}
           </pre>
+          <pre className="text-xs text-muted-foreground bg-muted rounded-md whitespace-pre-wrap break-all p-2 mt-4">
+            {JSON.stringify(
+              JSON.parse(props.groupMessage.extra?.yellow?.response || "{}"),
+              null,
+              2,
+            )}
+          </pre>
         </div>
         <DrawerFooter>
           <Button
