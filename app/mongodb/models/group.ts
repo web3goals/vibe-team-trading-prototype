@@ -7,6 +7,7 @@ export class Group {
     public _id: ObjectId,
     public created: Date,
     public status: "active" | "closed",
+    public name: string,
     public agent: GroupAgent,
     public users: GroupUser[],
     public messages: GroupMessage[],

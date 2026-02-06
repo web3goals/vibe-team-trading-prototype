@@ -33,6 +33,7 @@ export function GroupCreateDrawer() {
 
       // Call create group API
       await axios.post("/api/groups", {
+        name: "Degens",
         agent: demoConfig.groupAgentA,
         users: [demoConfig.groupUserA, demoConfig.groupUserB],
       });

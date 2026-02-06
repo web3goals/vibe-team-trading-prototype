@@ -75,6 +75,7 @@ export async function POST(request: NextRequest) {
 
     // Define the schema for request body validation
     const bodySchema = z.object({
+      name: z.string(),
       agent: z.object({
         address: z.string(),
         ensName: z.string(),
@@ -104,6 +105,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Extract validated data
+    const name = bodyParseResult.data.name;
     const agent: GroupAgent = {
       address: bodyParseResult.data.agent.address as `0x${string}`,
       ensName: bodyParseResult.data.agent.ensName,
@@ -174,6 +176,7 @@ export async function POST(request: NextRequest) {
       _id: new ObjectId(),
       created: new Date(),
       status: "active",
+      name: name,
       agent: agent,
       users: users,
       messages: messages,
