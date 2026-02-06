@@ -19,11 +19,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 import { confettiConfig } from "@/config/confetti";
 import { demoConfig } from "@/config/demo";
 import { handleError } from "@/lib/error";
+import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
@@ -46,6 +48,7 @@ export function GroupCreateDrawer() {
       .string()
       .min(1, "Description cannot be empty")
       .max(200, "Description is too long"),
+    agentEnsName: z.string().min(1, "Agent must be selected"),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -53,6 +56,7 @@ export function GroupCreateDrawer() {
     defaultValues: {
       name: "",
       description: "",
+      agentEnsName: demoConfig.groupAgentA.ensName,
     },
   });
 
@@ -70,7 +74,7 @@ export function GroupCreateDrawer() {
       await axios.post("/api/groups", {
         name: values.name,
         description: values.description,
-        agentEnsName: demoConfig.groupAgentA.ensName,
+        agentEnsName: values.agentEnsName,
         userEnsNames: [
           demoConfig.groupUserA.ensName,
           demoConfig.groupUserB.ensName,
@@ -143,6 +147,58 @@ export function GroupCreateDrawer() {
                         className="resize-none"
                         {...field}
                       />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="agentEnsName"
+                render={({ field }) => (
+                  <FormItem className="space-y-3">
+                    <FormLabel>Select Agent</FormLabel>
+                    <FormControl>
+                      <RadioGroup
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        className="flex flex-col gap-3"
+                      >
+                        {[
+                          {
+                            agent: demoConfig.groupAgentA,
+                            metadata: demoConfig.groupAgentMetadataA,
+                          },
+                          {
+                            agent: demoConfig.groupAgentB,
+                            metadata: demoConfig.groupAgentMetadataB,
+                          },
+                        ].map(({ agent, metadata }) => (
+                          <FormItem
+                            key={agent.ensName}
+                            className={cn(
+                              "flex items-start space-x-3 space-y-0 rounded-md border p-4 transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-900",
+                              field.value === agent.ensName &&
+                                "border-primary bg-zinc-50 dark:bg-zinc-900",
+                            )}
+                          >
+                            <FormControl>
+                              <RadioGroupItem
+                                value={agent.ensName}
+                                className="mt-1"
+                              />
+                            </FormControl>
+                            <div className="space-y-1 leading-none">
+                              <FormLabel className="font-medium leading-none cursor-pointer">
+                                {agent.ensName}
+                              </FormLabel>
+                              <p className="text-sm text-muted-foreground">
+                                {metadata.description}
+                              </p>
+                            </div>
+                          </FormItem>
+                        ))}
+                      </RadioGroup>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
