@@ -20,17 +20,22 @@ export function Group(props: { id: string }) {
 
   return (
     <div className="max-w-xl mx-auto px-4 py-8">
+      {/* Hero */}
       <div className="flex flex-row gap-4">
+        {/* Left part */}
         <Avatar className="size-10">
           <AvatarFallback className="bg-accent text-accent-foreground">
             {group.name[0].toUpperCase()}
           </AvatarFallback>
         </Avatar>
+        {/* Right part */}
         <div className="w-full">
+          {/* Name, description */}
           <div>
             <p className="font-bold">{group.name}</p>
             <p className="text-sm text-muted-foreground">{group.description}</p>
           </div>
+          {/* Buttons */}
           <div className="flex flex-row gap-2 mt-4">
             <GroupMessageCreateDrawer group={group} />
             <GroupCloseDrawer />
