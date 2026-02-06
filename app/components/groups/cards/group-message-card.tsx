@@ -30,7 +30,7 @@ export function GroupMessageCard(props: {
           <div>
             <div className="flex flex-row gap-2">
               <p className="font-bold">{props.groupMessage.creatorEnsName} </p>
-              <p className="text-muted-foreground">
+              <p className="font-bold text-muted-foreground">
                 {shortenAddress(props.groupMessage.creatorAddress)}
               </p>
             </div>
