@@ -33,7 +33,7 @@ export function HeaderMenu() {
               )
             }
           >
-            Sign in as User A
+            Sign in as {demoConfig.groupUserA.ensName}
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() =>
@@ -43,7 +43,7 @@ export function HeaderMenu() {
               )
             }
           >
-            Sign in as User B
+            Sign in as {demoConfig.groupUserB.ensName}
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() =>
@@ -53,7 +53,7 @@ export function HeaderMenu() {
               )
             }
           >
-            Sign in as User C
+            Sign in as {demoConfig.groupUserC.ensName}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
