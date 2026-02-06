@@ -1,3 +1,4 @@
+import { demoConfig } from "@/config/demo";
 import { yellowConfig } from "@/config/yellow";
 import { getAgentYellowMessageSigner } from "@/lib/agent";
 import { createFailedApiResponse, createSuccessApiResponse } from "@/lib/api";
@@ -77,16 +78,8 @@ export async function POST(request: NextRequest) {
     const bodySchema = z.object({
       name: z.string(),
       description: z.string(),
-      agent: z.object({
-        address: z.string(),
-        ensName: z.string(),
-      }),
-      users: z.array(
-        z.object({
-          address: z.string(),
-          ensName: z.string(),
-        }),
-      ),
+      agentEnsName: z.string(),
+      userEnsNames: z.array(z.string()),
     });
 
     // Extract request body
@@ -106,16 +99,42 @@ export async function POST(request: NextRequest) {
     }
 
     // Extract validated data
-    const name = bodyParseResult.data.name;
-    const description = bodyParseResult.data.description;
-    const agent: GroupAgent = {
-      address: bodyParseResult.data.agent.address as `0x${string}`,
-      ensName: bodyParseResult.data.agent.ensName,
-    };
-    const users: GroupUser[] = bodyParseResult.data.users.map((user) => ({
-      address: user.address as `0x${string}`,
-      ensName: user.ensName,
-    }));
+    const { name, description, agentEnsName, userEnsNames } =
+      bodyParseResult.data;
+
+    // Define agent
+    let agent: GroupAgent | undefined;
+    if (agentEnsName === demoConfig.groupAgentA.ensName) {
+      agent = demoConfig.groupAgentA;
+    }
+    if (agentEnsName === demoConfig.groupAgentB.ensName) {
+      agent = demoConfig.groupAgentB;
+    }
+    if (!agent) {
+      return createFailedApiResponse(
+        { message: "Invalid agentEnsName, no matching agent found" },
+        400,
+      );
+    }
+
+    // Define users
+    const users: GroupUser[] = [];
+    for (const userEnsName of userEnsNames) {
+      let user: GroupUser | undefined;
+      if (userEnsName === demoConfig.groupUserA.ensName) {
+        user = demoConfig.groupUserA;
+      }
+      if (userEnsName === demoConfig.groupUserB.ensName) {
+        user = demoConfig.groupUserB;
+      }
+      if (userEnsName === demoConfig.groupUserC.ensName) {
+        user = demoConfig.groupUserC;
+      }
+
+      if (user) {
+        users.push(user);
+      }
+    }
 
     // Define Yellow app definition
     const yellowAppDefinition: RPCAppDefinition = {

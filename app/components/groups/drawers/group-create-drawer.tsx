@@ -70,8 +70,11 @@ export function GroupCreateDrawer() {
       await axios.post("/api/groups", {
         name: values.name,
         description: values.description,
-        agent: demoConfig.groupAgentA,
-        users: [demoConfig.groupUserA, demoConfig.groupUserB],
+        agentEnsName: demoConfig.groupAgentA.ensName,
+        userEnsNames: [
+          demoConfig.groupUserA.ensName,
+          demoConfig.groupUserB.ensName,
+        ],
       });
 
       // Invalidate groups query to refetch the groups with the newly created group
