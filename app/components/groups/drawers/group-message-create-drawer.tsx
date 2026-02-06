@@ -53,7 +53,7 @@ export function GroupMessageCreateDrawer(props: { group: Group }) {
 
       setIsOpen(false);
       confetti({ ...confettiConfig });
-      toast.success("Created");
+      toast.success("Posted");
     } catch (error) {
       handleError({ error, toastTitle: "Failed to post message" });
     } finally {
