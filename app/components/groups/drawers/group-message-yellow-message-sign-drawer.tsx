@@ -42,10 +42,18 @@ export function GroupMessageYellowMessageSignDrawer(props: {
       setIsProcessing(true);
 
       if (!address || !sessionAccountPrivateKey) {
+        setIsOpen(false);
         throw new Error("Please sign in");
       }
+      if (!props.group.users.some((user) => user.address === address)) {
+        setIsOpen(false);
+        throw new Error(
+          "You must be a member of the group to sign the Yellow message",
+        );
+      }
       if (!props.groupMessage.extra?.yellow?.message) {
-        throw new Error("No yellow message to sign");
+        setIsOpen(false);
+        throw new Error("No Yellow message to sign");
       }
 
       const yellowMessageSigner = createECDSAMessageSigner(

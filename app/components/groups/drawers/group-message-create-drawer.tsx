@@ -61,6 +61,10 @@ export function GroupMessageCreateDrawer(props: { group: Group }) {
         setIsOpen(false);
         throw new Error("Please sign in");
       }
+      if (!props.group.users.some((user) => user.address === address)) {
+        setIsOpen(false);
+        throw new Error("You must be a member of the group to post a message");
+      }
 
       // Call create group API
       await axios.post(`/api/groups/${props.group._id.toString()}/messages`, {
