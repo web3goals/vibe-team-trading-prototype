@@ -5,8 +5,11 @@ import { GroupMessage } from "@/types/group";
 import EntityList from "../ui-extra/entity-list";
 import EntityListDefaultNoEntitiesCard from "../ui-extra/entity-list-default-no-entities-card";
 import { Loading } from "../ui-extra/loading";
+import { Avatar, AvatarFallback } from "../ui/avatar";
 import { Separator } from "../ui/separator";
 import { GroupMessageCard } from "./cards/group-message-card";
+import { GroupCloseDrawer } from "./drawers/group-close-drawer";
+import { GroupMessageCreateDrawer } from "./drawers/group-message-create-drawer";
 
 export function Group(props: { id: string }) {
   const { data: group, isLoading: isGroupLoading } = useGroup(props.id);
@@ -17,25 +20,24 @@ export function Group(props: { id: string }) {
 
   return (
     <div className="max-w-xl mx-auto px-4 py-8">
-      <div className="flex flex-col gap-2">
-        <p className="text-sm text-muted-foreground">ID: {props.id}</p>
-        <p className="text-sm text-muted-foreground wrap-break-word">Agent:</p>
-        <pre className="text-xs text-muted-foreground bg-muted rounded-md whitespace-pre-wrap break-all p-2">
-          {JSON.stringify(group.agent, null, 2)}
-        </pre>
-        <p className="text-sm text-muted-foreground wrap-break-word">Users:</p>
-        <pre className="text-xs text-muted-foreground bg-muted rounded-md whitespace-pre-wrap break-all p-2">
-          {JSON.stringify(group.users, null, 2)}
-        </pre>
-        <p className="text-sm text-muted-foreground">Yellow app session ID:</p>
-        <pre className="text-xs text-muted-foreground bg-muted rounded-md whitespace-pre-wrap break-all p-2">
-          {group.yellowAppSessionId || "N/A"}
-        </pre>
-        <p className="text-sm text-muted-foreground">
-          Yellow app version: {group.yellowAppVersion || "N/A"}
-        </p>
+      <div className="flex flex-row gap-4">
+        <Avatar className="size-10">
+          <AvatarFallback className="bg-accent text-accent-foreground">
+            {group.name[0].toUpperCase()}
+          </AvatarFallback>
+        </Avatar>
+        <div className="w-full">
+          <div>
+            <p className="font-bold">{group.name}</p>
+            <p className="text-sm text-muted-foreground">{group.description}</p>
+          </div>
+          <div className="flex flex-row gap-2 mt-4">
+            <GroupMessageCreateDrawer group={group} />
+            <GroupCloseDrawer />
+          </div>
+        </div>
       </div>
-      <Separator className="mt-8" />
+      <Separator className="mt-4" />
       <EntityList<GroupMessage>
         entities={[...group.messages].reverse()}
         renderEntityCard={(groupMessage, index) => (
@@ -48,7 +50,7 @@ export function Group(props: { id: string }) {
         noEntitiesCard={
           <EntityListDefaultNoEntitiesCard noEntitiesText="No data yet, check back later" />
         }
-        className="mt-8"
+        className="mt-4"
       />
     </div>
   );
