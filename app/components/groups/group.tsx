@@ -23,8 +23,8 @@ export function Group(props: { id: string }) {
       {/* Hero */}
       <div className="flex flex-row gap-4">
         {/* Left part */}
-        <Avatar className="size-10">
-          <AvatarFallback className="bg-accent text-accent-foreground">
+        <Avatar className="size-16">
+          <AvatarFallback className="bg-accent text-accent-foreground text-2xl">
             {group.name[0].toUpperCase()}
           </AvatarFallback>
         </Avatar>
