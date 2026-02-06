@@ -10,25 +10,49 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
 import { Spinner } from "@/components/ui/spinner";
+import { Textarea } from "@/components/ui/textarea";
 import { confettiConfig } from "@/config/confetti";
 import { handleError } from "@/lib/error";
 import { Group } from "@/mongodb/models/group";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import confetti from "canvas-confetti";
 import { PencilIcon } from "lucide-react";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { z } from "zod";
 
-// TODO: Implement
 export function GroupMessageCreateDrawer(props: { group: Group }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const queryClient = useQueryClient();
   const { address, ensName } = useUser();
 
-  async function handleCreateGroupMessage() {
+  const formSchema = z.object({
+    content: z
+      .string()
+      .min(1, "Message cannot be empty")
+      .max(1000, "Message is too long"),
+  });
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      content: "",
+    },
+  });
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       console.log("[Component] Creating group message...");
       setIsProcessing(true);
@@ -43,7 +67,7 @@ export function GroupMessageCreateDrawer(props: { group: Group }) {
         creatorAddress: address,
         creatorEnsName: ensName,
         creatorRole: "user",
-        content: "Hello world",
+        content: values.content,
       });
 
       // Invalidate group query to refetch the group with the newly created message
@@ -52,6 +76,7 @@ export function GroupMessageCreateDrawer(props: { group: Group }) {
       });
 
       setIsOpen(false);
+      form.reset();
       confetti({ ...confettiConfig });
       toast.success("Posted");
     } catch (error) {
@@ -68,6 +93,7 @@ export function GroupMessageCreateDrawer(props: { group: Group }) {
       onOpenChange={(open) => {
         if (!isProcessing) {
           setIsOpen(open);
+          form.reset();
         }
       }}
     >
@@ -84,12 +110,36 @@ export function GroupMessageCreateDrawer(props: { group: Group }) {
           </DrawerDescription>
         </DrawerHeader>
         <div className="flex-1 overflow-y-auto px-4">
-          <p>...</p>
+          <Form {...form}>
+            <form
+              id="group-message-create-form"
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-8"
+            >
+              <FormField
+                control={form.control}
+                name="content"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Write a message..."
+                        rows={3}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </form>
+          </Form>
         </div>
         <DrawerFooter>
           <Button
             disabled={isProcessing}
-            onClick={() => handleCreateGroupMessage()}
+            type="submit"
+            form="group-message-create-form"
           >
             {isProcessing && <Spinner />} Post
           </Button>
