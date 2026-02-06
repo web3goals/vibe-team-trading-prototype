@@ -30,7 +30,7 @@ export function GroupMessageCard(props: {
             </p>
           </div>
           {/* Content */}
-          <div className="text-sm mt-2">
+          <div className="text-sm mt-4">
             <p className="whitespace-pre-wrap">{props.groupMessage.content}</p>
           </div>
           {/* Separator for Yellow buttons */}
