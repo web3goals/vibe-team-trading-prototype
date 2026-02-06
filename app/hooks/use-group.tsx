@@ -25,6 +25,7 @@ export function useGroup(groupId: string | undefined) {
     queryFn: ({ signal }) => getGroup({ groupId: groupId!, signal }),
     retry: 2,
     refetchOnWindowFocus: false,
+    refetchInterval: 5000,
     enabled: !!groupId,
   });
 
