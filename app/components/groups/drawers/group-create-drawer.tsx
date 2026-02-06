@@ -268,6 +268,12 @@ export function GroupCreateDrawer() {
                   <Input value={quorum} disabled />
                 </FormControl>
               </FormItem>
+              <FormItem>
+                <FormLabel>Allocation per user (USDC)</FormLabel>
+                <FormControl>
+                  <Input value="10" disabled />
+                </FormControl>
+              </FormItem>
             </form>
           </Form>
         </div>
