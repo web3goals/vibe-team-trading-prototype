@@ -74,7 +74,7 @@ export function HeaderMenu() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={signOut} className="text-destructive">
+        <DropdownMenuItem variant="destructive" onClick={signOut}>
           <LogOutIcon className="size-4" />
           Sign out
         </DropdownMenuItem>
