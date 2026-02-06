@@ -15,7 +15,7 @@ import {
 export function HeaderMenu() {
   const { address, ensName, signIn, signOut, isSigningIn } = useUser();
 
-  if (!address) {
+  if (!address || !ensName) {
     return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -33,7 +33,16 @@ export function HeaderMenu() {
               )
             }
           >
-            Sign in as {demoConfig.groupUserA.ensName}
+            <span>Sign in as</span>
+            <Avatar className="size-6">
+              <AvatarImage
+                src={`https://api.dicebear.com/9.x/notionists/svg?seed=${demoConfig.groupUserA.ensName}&backgroundColor=8c5cff`}
+              />
+              <AvatarFallback>
+                {demoConfig.groupUserA.ensName.toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+            <span>{demoConfig.groupUserA.ensName}</span>
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() =>
@@ -43,7 +52,16 @@ export function HeaderMenu() {
               )
             }
           >
-            Sign in as {demoConfig.groupUserB.ensName}
+            <span>Sign in as</span>
+            <Avatar className="size-6">
+              <AvatarImage
+                src={`https://api.dicebear.com/9.x/notionists/svg?seed=${demoConfig.groupUserB.ensName}&backgroundColor=8c5cff`}
+              />
+              <AvatarFallback>
+                {demoConfig.groupUserB.ensName.toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+            <span>{demoConfig.groupUserB.ensName}</span>
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() =>
@@ -53,7 +71,16 @@ export function HeaderMenu() {
               )
             }
           >
-            Sign in as {demoConfig.groupUserC.ensName}
+            <span>Sign in as</span>
+            <Avatar className="size-6">
+              <AvatarImage
+                src={`https://api.dicebear.com/9.x/notionists/svg?seed=${demoConfig.groupUserC.ensName}&backgroundColor=8c5cff`}
+              />
+              <AvatarFallback>
+                {demoConfig.groupUserC.ensName.toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+            <span>{demoConfig.groupUserC.ensName}</span>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -68,7 +95,7 @@ export function HeaderMenu() {
             <AvatarImage
               src={`https://api.dicebear.com/9.x/notionists/svg?seed=${ensName}&backgroundColor=8c5cff`}
             />
-            <AvatarFallback>{ensName?.[0]?.toUpperCase()}</AvatarFallback>
+            <AvatarFallback>{ensName[0].toUpperCase()}</AvatarFallback>
           </Avatar>
           {ensName}
         </Button>
