@@ -13,6 +13,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { confettiConfig } from "@/config/confetti";
 import { demoConfig } from "@/config/demo";
 import { handleError } from "@/lib/error";
+import { useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import confetti from "canvas-confetti";
 import { UsersRoundIcon } from "lucide-react";
@@ -23,6 +24,7 @@ import { toast } from "sonner";
 export function GroupCreateDrawer() {
   const [isOpen, setIsOpen] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const queryClient = useQueryClient();
 
   async function handleCreateGroup() {
     try {
@@ -34,6 +36,9 @@ export function GroupCreateDrawer() {
         agent: demoConfig.groupAgentA,
         users: [demoConfig.groupUserA, demoConfig.groupUserB],
       });
+
+      // Invalidate groups query to refetch the groups with the newly created group
+      queryClient.invalidateQueries({ queryKey: ["groups"] });
 
       setIsOpen(false);
       confetti({ ...confettiConfig });
