@@ -1,3 +1,4 @@
+import { useUser } from "@/components/providers/user-provider";
 import { Button } from "@/components/ui/button";
 import {
   Drawer,
@@ -25,11 +26,17 @@ export function GroupCreateDrawer() {
   const [isOpen, setIsOpen] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const queryClient = useQueryClient();
+  const { address } = useUser();
 
   async function handleCreateGroup() {
     try {
       console.log("[Component] Creating group...");
       setIsProcessing(true);
+
+      if (!address) {
+        setIsOpen(false);
+        throw new Error("Please sign in");
+      }
 
       // Call create group API
       await axios.post("/api/groups", {
