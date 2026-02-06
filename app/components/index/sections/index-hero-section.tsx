@@ -1,7 +1,7 @@
-import { Button } from "@/components/ui/button";
+import { AgentCreateDrawer } from "@/components/agents/drawers/agent-create-drawer";
+import { GroupCreateDrawer } from "@/components/groups/drawers/group-create-drawer";
 import { cn } from "@/lib/utils";
 import { ClassValue } from "clsx";
-import { BotIcon, UsersRoundIcon } from "lucide-react";
 import Image from "next/image";
 
 export function IndexHeroSection(props: { className?: ClassValue }) {
@@ -27,13 +27,8 @@ export function IndexHeroSection(props: { className?: ClassValue }) {
       </h4>
       {/* Buttons */}
       <div className="flex flex-row items-center justify-center gap-2 mt-4">
-        <Button variant="default">
-          <UsersRoundIcon />
-          Create group
-        </Button>
-        <Button variant="outline" disabled>
-          <BotIcon /> Add agent
-        </Button>
+        <GroupCreateDrawer />
+        <AgentCreateDrawer />
       </div>
     </div>
   );
