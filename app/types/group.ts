@@ -3,6 +3,12 @@ export type GroupAgent = {
   ensName: string;
 };
 
+export type GroupAgentMetadata = {
+  description: string;
+  creatorAddress: `0x${string}`;
+  creatorEnsName: string;
+};
+
 export type GroupUser = {
   address: `0x${string}`;
   ensName: string;

@@ -1,4 +1,4 @@
-import { GroupAgent, GroupUser } from "@/types/group";
+import { GroupAgent, GroupAgentMetadata, GroupUser } from "@/types/group";
 import { zeroAddress } from "viem";
 
 const groupAgentA: GroupAgent = {
@@ -9,6 +9,18 @@ const groupAgentA: GroupAgent = {
 const groupAgentB: GroupAgent = {
   address: zeroAddress,
   ensName: "boomer.vtt.eth",
+};
+
+const groupAgentMetadataA: GroupAgentMetadata = {
+  description: "High risk, high volatility, rapid growth",
+  creatorAddress: zeroAddress,
+  creatorEnsName: "john.vtt.eth",
+};
+
+const groupAgentMetadataB: GroupAgentMetadata = {
+  description: "Risk mitigation, capital preservation, steady growth",
+  creatorAddress: zeroAddress,
+  creatorEnsName: "john.vtt.eth",
 };
 
 const groupUserA: GroupUser = {
@@ -28,6 +40,8 @@ const groupUserC: GroupUser = {
 
 export const demoConfig = {
   groupAgentA,
+  groupAgentMetadataA,
+  groupAgentMetadataB,
   groupAgentB,
   groupUserA,
   groupUserB,
