@@ -19,6 +19,7 @@ export type GroupMessage = {
   id: string;
   created: Date;
   creatorAddress: `0x${string}`;
+  creatorEnsName: string;
   creatorRole: "user" | "agent";
   content: string;
   extra?: {

@@ -26,14 +26,14 @@ export function GroupCreateDrawer() {
   const [isOpen, setIsOpen] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const queryClient = useQueryClient();
-  const { address } = useUser();
+  const { address, ensName } = useUser();
 
   async function handleCreateGroup() {
     try {
       console.log("[Component] Creating group...");
       setIsProcessing(true);
 
-      if (!address) {
+      if (!address || !ensName) {
         setIsOpen(false);
         throw new Error("Please sign in");
       }
@@ -83,15 +83,12 @@ export function GroupCreateDrawer() {
           </DrawerDescription>
         </DrawerHeader>
         <div className="flex-1 overflow-y-auto px-4">
-          <Button
-            disabled={isProcessing}
-            onClick={() => handleCreateGroup()}
-            className="w-full"
-          >
-            {isProcessing && <Spinner />} Create
-          </Button>
+          <p>...</p>
         </div>
         <DrawerFooter>
+          <Button disabled={isProcessing} onClick={() => handleCreateGroup()}>
+            {isProcessing && <Spinner />} Create
+          </Button>
           <DrawerClose asChild>
             <Button variant="outline">Close</Button>
           </DrawerClose>

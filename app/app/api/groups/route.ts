@@ -161,10 +161,11 @@ export async function POST(request: NextRequest) {
       id: new ObjectId().toString(),
       created: new Date(),
       creatorAddress: agent.address,
+      creatorEnsName: agent.ensName,
       creatorRole: "agent",
       content:
-        `Created a group with ${agent.ensName} and others...\n\n` +
-        `Sign a message to create a Yellow app session`,
+        `Group created 🎉\n\n` +
+        `To start vibe team trading, everyone needs to sign the Yellow message so I can set up our Yellow app session`,
       extra: {
         yellow: {
           message: yellowMessage,

@@ -17,6 +17,7 @@ export async function POST(
     // Define the schema for request body validation
     const bodySchema = z.object({
       creatorAddress: z.string(),
+      creatorEnsName: z.string(),
       creatorRole: z.enum(["user"]),
       content: z.string(),
     });
@@ -38,7 +39,8 @@ export async function POST(
     }
 
     // Extract validated data
-    const { creatorAddress, creatorRole, content } = bodyParseResult.data;
+    const { creatorAddress, creatorEnsName, creatorRole, content } =
+      bodyParseResult.data;
 
     // Find the group
     const group = await findGroups({ id: groupId }).then((groups) => groups[0]);
@@ -51,6 +53,7 @@ export async function POST(
       id: new ObjectId().toString(),
       created: new Date(),
       creatorAddress: creatorAddress as `0x${string}`,
+      creatorEnsName: creatorEnsName,
       creatorRole: creatorRole,
       content: content,
     });

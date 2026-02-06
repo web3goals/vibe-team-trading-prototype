@@ -26,14 +26,14 @@ export function GroupMessageCreateDrawer(props: { group: Group }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const queryClient = useQueryClient();
-  const { address } = useUser();
+  const { address, ensName } = useUser();
 
   async function handleCreateGroupMessage() {
     try {
       console.log("[Component] Creating group message...");
       setIsProcessing(true);
 
-      if (!address) {
+      if (!address || !ensName) {
         setIsOpen(false);
         throw new Error("Please sign in");
       }
@@ -41,6 +41,7 @@ export function GroupMessageCreateDrawer(props: { group: Group }) {
       // Call create group API
       await axios.post(`/api/groups/${props.group._id.toString()}/messages`, {
         creatorAddress: address,
+        creatorEnsName: ensName,
         creatorRole: "user",
         content: "Hello world",
       });
@@ -83,15 +84,15 @@ export function GroupMessageCreateDrawer(props: { group: Group }) {
           </DrawerDescription>
         </DrawerHeader>
         <div className="flex-1 overflow-y-auto px-4">
+          <p>...</p>
+        </div>
+        <DrawerFooter>
           <Button
             disabled={isProcessing}
             onClick={() => handleCreateGroupMessage()}
-            className="w-full"
           >
             {isProcessing && <Spinner />} Post
           </Button>
-        </div>
-        <DrawerFooter>
           <DrawerClose asChild>
             <Button variant="outline">Close</Button>
           </DrawerClose>
