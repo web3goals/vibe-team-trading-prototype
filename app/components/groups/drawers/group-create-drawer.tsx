@@ -1,5 +1,5 @@
-import { useUser } from "@/components/providers/user-provider";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Drawer,
   DrawerClose,
@@ -40,7 +40,6 @@ export function GroupCreateDrawer() {
   const [isOpen, setIsOpen] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const queryClient = useQueryClient();
-  const { address, ensName } = useUser();
 
   const formSchema = z.object({
     name: z.string().min(1, "Name cannot be empty").max(50, "Name is too long"),
@@ -49,6 +48,10 @@ export function GroupCreateDrawer() {
       .min(1, "Description cannot be empty")
       .max(200, "Description is too long"),
     agentEnsName: z.string().min(1, "Agent must be selected"),
+    userEnsNames: z
+      .array(z.string())
+      .min(2, "Select at least 2 users")
+      .max(3, "Select at most 3 users"),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -57,6 +60,7 @@ export function GroupCreateDrawer() {
       name: "",
       description: "",
       agentEnsName: demoConfig.groupAgentA.ensName,
+      userEnsNames: [],
     },
   });
 
@@ -65,20 +69,12 @@ export function GroupCreateDrawer() {
       console.log("[Component] Creating group...");
       setIsProcessing(true);
 
-      if (!address || !ensName) {
-        setIsOpen(false);
-        throw new Error("Please sign in");
-      }
-
       // Call create group API
       await axios.post("/api/groups", {
         name: values.name,
         description: values.description,
         agentEnsName: values.agentEnsName,
-        userEnsNames: [
-          demoConfig.groupUserA.ensName,
-          demoConfig.groupUserB.ensName,
-        ],
+        userEnsNames: values.userEnsNames,
       });
 
       // Invalidate groups query to refetch the groups with the newly created group
@@ -119,9 +115,13 @@ export function GroupCreateDrawer() {
             Vibe together, trade together, and let AI do the heavy lifting
           </DrawerDescription>
         </DrawerHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <div className="flex-1 overflow-y-auto px-4 space-y-4">
+        <div className="flex-1 overflow-y-auto px-4">
+          <Form {...form}>
+            <form
+              id="group-create-form"
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-4"
+            >
               <FormField
                 control={form.control}
                 name="name"
@@ -204,17 +204,73 @@ export function GroupCreateDrawer() {
                   </FormItem>
                 )}
               />
-            </div>
-            <DrawerFooter>
-              <Button type="submit" disabled={isProcessing}>
-                {isProcessing && <Spinner />} Create
-              </Button>
-              <DrawerClose asChild>
-                <Button variant="outline">Close</Button>
-              </DrawerClose>
-            </DrawerFooter>
-          </form>
-        </Form>
+              <FormField
+                control={form.control}
+                name="userEnsNames"
+                render={() => (
+                  <FormItem>
+                    <div className="mb-4">
+                      <FormLabel className="text-base">Users</FormLabel>
+                    </div>
+                    {[
+                      demoConfig.groupUserA,
+                      demoConfig.groupUserB,
+                      demoConfig.groupUserC,
+                    ].map((user) => (
+                      <FormField
+                        key={user.ensName}
+                        control={form.control}
+                        name="userEnsNames"
+                        render={({ field }) => {
+                          return (
+                            <FormItem
+                              key={user.ensName}
+                              className="flex flex-row items-start space-x-3 space-y-0"
+                            >
+                              <FormControl>
+                                <Checkbox
+                                  checked={field.value?.includes(user.ensName)}
+                                  onCheckedChange={(checked) => {
+                                    return checked
+                                      ? field.onChange([
+                                          ...field.value,
+                                          user.ensName,
+                                        ])
+                                      : field.onChange(
+                                          field.value?.filter(
+                                            (value) => value !== user.ensName,
+                                          ),
+                                        );
+                                  }}
+                                />
+                              </FormControl>
+                              <FormLabel className="text-sm font-normal cursor-pointer">
+                                {user.ensName}
+                              </FormLabel>
+                            </FormItem>
+                          );
+                        }}
+                      />
+                    ))}
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </form>
+          </Form>
+        </div>
+        <DrawerFooter>
+          <Button
+            type="submit"
+            form="group-create-form"
+            disabled={isProcessing}
+          >
+            {isProcessing && <Spinner />} Create
+          </Button>
+          <DrawerClose asChild>
+            <Button variant="outline">Close</Button>
+          </DrawerClose>
+        </DrawerFooter>
       </DrawerContent>
     </Drawer>
   );

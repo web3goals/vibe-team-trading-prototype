@@ -137,9 +137,9 @@ export function GroupMessageCreateDrawer(props: { group: Group }) {
         </div>
         <DrawerFooter>
           <Button
-            disabled={isProcessing}
             type="submit"
             form="group-message-create-form"
+            disabled={isProcessing}
           >
             {isProcessing && <Spinner />} Post
           </Button>
