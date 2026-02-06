@@ -91,6 +91,12 @@ export function GroupCreateDrawer() {
     }
   }
 
+  const userEnsNames = form.watch("userEnsNames");
+  const quorum =
+    userEnsNames.length > 0
+      ? `${userEnsNames.length}/${userEnsNames.length}`
+      : "0/0";
+
   return (
     <Drawer
       repositionInputs={false}
@@ -256,6 +262,12 @@ export function GroupCreateDrawer() {
                   </FormItem>
                 )}
               />
+              <FormItem>
+                <FormLabel>Quorum</FormLabel>
+                <FormControl>
+                  <Input value={quorum} disabled />
+                </FormControl>
+              </FormItem>
             </form>
           </Form>
         </div>
