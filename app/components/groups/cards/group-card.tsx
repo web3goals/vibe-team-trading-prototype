@@ -1,6 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { shortenAddress } from "@/lib/address";
 import { Group } from "@/mongodb/models/group";
 import { ChevronRightIcon } from "lucide-react";
 import Link from "next/link";
@@ -44,6 +45,9 @@ export function GroupCard(props: { group: Group }) {
                 </AvatarFallback>
               </Avatar>
               <p className="text-sm">{props.group.agent.ensName}</p>
+              <p className="text-sm text-muted-foreground">
+                {shortenAddress(props.group.agent.address)}
+              </p>
             </div>
           </div>
           {/* Users */}
@@ -60,6 +64,9 @@ export function GroupCard(props: { group: Group }) {
                   </AvatarFallback>
                 </Avatar>
                 <p className="text-sm">{user.ensName}</p>
+                <p className="text-sm text-muted-foreground">
+                  {shortenAddress(user.address)}
+                </p>
               </div>
             ))}
           </div>

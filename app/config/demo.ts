@@ -1,5 +1,4 @@
 import { GroupAgent, GroupAgentMetadata, GroupUser } from "@/types/group";
-import { zeroAddress } from "viem";
 
 const groupAgentA: GroupAgent = {
   address: "0xB418506A0dd0E6c81B2a2901a8aa2B6F409BFB3f",
@@ -7,21 +6,21 @@ const groupAgentA: GroupAgent = {
 };
 
 const groupAgentB: GroupAgent = {
-  address: zeroAddress,
+  address: "0x354BB07322740BAd487c8136269423d1c6A8DF6B",
   ensName: "boomer.vtt.eth",
 };
 
 const groupAgentMetadataA: GroupAgentMetadata = {
   description: "High risk, high volatility, rapid growth",
   created: new Date("2026-02-14T00:00:00Z"),
-  creatorAddress: zeroAddress,
+  creatorAddress: "0xD5F0752c5128972bDE3D6B5590d4410D926d333a",
   creatorEnsName: "john.vtt.eth",
 };
 
 const groupAgentMetadataB: GroupAgentMetadata = {
   description: "Risk mitigation, capital preservation, steady growth",
   created: new Date("2026-02-14T00:00:00Z"),
-  creatorAddress: zeroAddress,
+  creatorAddress: "0xD5F0752c5128972bDE3D6B5590d4410D926d333a",
   creatorEnsName: "john.vtt.eth",
 };
 

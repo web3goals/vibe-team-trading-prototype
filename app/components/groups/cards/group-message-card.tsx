@@ -1,6 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { shortenAddress } from "@/lib/address";
 import { Group } from "@/mongodb/models/group";
 import { GroupMessage } from "@/types/group";
 import { SquareArrowOutUpRightIcon } from "lucide-react";
@@ -25,9 +26,14 @@ export function GroupMessageCard(props: {
         </Avatar>
         {/* Right part */}
         <div className="w-full">
-          {/* Creator ENS name, created */}
+          {/* Creator ENS name, address, created */}
           <div>
-            <p className="font-bold">{props.groupMessage.creatorEnsName}</p>
+            <div className="flex flex-row gap-2">
+              <p className="font-bold">{props.groupMessage.creatorEnsName} </p>
+              <p className="text-muted-foreground">
+                {shortenAddress(props.groupMessage.creatorAddress)}
+              </p>
+            </div>
             <p className="text-sm text-muted-foreground">
               {new Date(props.groupMessage.created).toLocaleString()}
             </p>

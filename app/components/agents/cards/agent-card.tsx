@@ -1,9 +1,11 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { shortenAddress } from "@/lib/address";
 
 export function AgentCard(props: {
   ensName: string;
   description: string;
   created: Date;
+  creatorAddress: `0x${string}`;
   creatorEnsName: string;
 }) {
   return (
@@ -43,6 +45,9 @@ export function AgentCard(props: {
                 </AvatarFallback>
               </Avatar>
               <p className="text-sm">{props.creatorEnsName}</p>
+              <p className="text-sm text-muted-foreground">
+                {shortenAddress(props.creatorAddress)}
+              </p>
             </div>
           </div>
         </div>
