@@ -22,6 +22,7 @@ export function useGroups() {
     queryFn: ({ signal }) => getGroups({ signal }),
     retry: 2,
     refetchOnWindowFocus: false,
+    refetchInterval: 5000,
   });
 
   return query;
