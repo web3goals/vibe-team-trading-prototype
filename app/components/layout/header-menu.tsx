@@ -2,6 +2,7 @@
 
 import { useUser } from "@/components/providers/user-provider";
 import { demoConfig } from "@/config/demo";
+import { shortenAddress } from "@/lib/address";
 import { LogInIcon, LogOutIcon } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
@@ -11,7 +12,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import { shortenAddress } from "@/lib/address";
 
 export function HeaderMenu() {
   const { address, ensName, signIn, signOut, isSigningIn } = useUser();
@@ -67,7 +67,7 @@ export function HeaderMenu() {
             </Avatar>
             <span>{demoConfig.groupUserB.ensName}</span>
             <span className="text-muted-foreground">
-              {shortenAddress(demoConfig.groupUserA.address)}
+              {shortenAddress(demoConfig.groupUserB.address)}
             </span>
           </DropdownMenuItem>
           <DropdownMenuItem
@@ -89,7 +89,7 @@ export function HeaderMenu() {
             </Avatar>
             <span>{demoConfig.groupUserC.ensName}</span>
             <span className="text-muted-foreground">
-              {shortenAddress(demoConfig.groupUserA.address)}
+              {shortenAddress(demoConfig.groupUserC.address)}
             </span>
           </DropdownMenuItem>
         </DropdownMenuContent>
