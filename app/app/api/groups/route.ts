@@ -14,7 +14,6 @@ import { createAppSessionMessage as createCreateAppSessionMessage } from "@erc78
 import { ObjectId } from "mongodb";
 import { NextRequest } from "next/server";
 import z from "zod";
-import { describe } from "zod/v4/core";
 
 export async function GET(request: NextRequest) {
   try {
@@ -163,9 +162,10 @@ export async function POST(request: NextRequest) {
       creatorAddress: agent.address,
       creatorEnsName: agent.ensName,
       creatorRole: "agent",
-      content:
-        `Group created 🎉\n\n` +
-        `To start vibe team trading, everyone needs to sign the Yellow message so I can set up our Yellow app session`,
+      content: [
+        "Group created 🎉",
+        "To start vibe team trading, everyone needs to sign the Yellow message so I can set up our Yellow app session",
+      ].join("\n\n"),
       extra: {
         yellow: {
           message: yellowMessage,

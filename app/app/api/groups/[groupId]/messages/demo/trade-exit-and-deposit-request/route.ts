@@ -15,7 +15,9 @@ export async function POST(
   { params }: { params: Promise<{ groupId: string }> },
 ) {
   try {
-    console.log("[API] Creating demo trade withdraw request message...");
+    console.log(
+      "[API] Creating demo trade exit and deposit request message...",
+    );
 
     const { groupId } = await params;
 
@@ -31,7 +33,7 @@ export async function POST(
       {
         participant: group.agent.address,
         asset: "ytest.usd",
-        amount: Number(0).toString(),
+        amount: Number(2 + 0.59).toString(),
       },
       ...group.users.map((user) => ({
         participant: user.address,
@@ -50,7 +52,7 @@ export async function POST(
         app_session_id: group.yellowAppSessionId as `0x${string}`,
         allocations: yellowAppAllocations,
         version: (group.yellowAppVersion as number) + 1,
-        intent: RPCAppStateIntent.Withdraw,
+        intent: RPCAppStateIntent.Deposit,
       },
     );
 
@@ -62,15 +64,18 @@ export async function POST(
       creatorEnsName: group.agent.ensName,
       creatorRole: "agent",
       content: [
-        "Funds allocated 🤝",
-        "Now, please sign this Yellow message to authorize the withdrawal of the USDC to the execution wallet",
-        "I will then route the ENS swap through LI.FI to ensure the best execution price for our entry",
+        "Target hit 🎯",
+        "I've sold the 0.36 ENS for 2.59 USDC, securing a total profit of 0.59 USDC",
+        "To complete the cycle, please sign the Yellow message to allow me to deposit the 2.59 USDC back into the Yellow app session",
       ].join("\n\n"),
       extra: {
         yellow: {
           message: yellowMessage,
           messageCreated: new Date(),
           messageSignerAddresses: [group.agent.address],
+        },
+        lifi: {
+          transactionLink: "https://etherscan.io/",
         },
       },
     });
@@ -81,7 +86,7 @@ export async function POST(
     return createSuccessApiResponse({ group });
   } catch (error) {
     console.error(
-      `[API] Failed to create demo trade withdraw request message, error: ${getErrorString(error)}`,
+      `[API] Failed to create demo trade exit and deposit request message, error: ${getErrorString(error)}`,
     );
     return createFailedApiResponse(
       { message: "Internal server error, try again later" },

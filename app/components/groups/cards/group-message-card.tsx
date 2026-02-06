@@ -1,7 +1,10 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Group } from "@/mongodb/models/group";
 import { GroupMessage } from "@/types/group";
+import { SquareArrowOutUpRightIcon } from "lucide-react";
+import Link from "next/link";
 import { GroupMessageYellowMessageSignDrawer } from "../drawers/group-message-yellow-message-sign-drawer";
 
 export function GroupMessageCard(props: {
@@ -33,15 +36,32 @@ export function GroupMessageCard(props: {
           <div className="text-sm mt-4">
             <p className="whitespace-pre-wrap">{props.groupMessage.content}</p>
           </div>
-          {/* Separator for Yellow buttons */}
-          {props.groupMessage.extra?.yellow && <Separator className="mt-4" />}
-          {/* Yellow buttons */}
-          {props.groupMessage.extra?.yellow && (
-            <GroupMessageYellowMessageSignDrawer
-              group={props.group}
-              groupMessage={props.groupMessage}
-              className="mt-4"
-            />
+          {/* Separator for Yellow and LI.FI buttons */}
+          {(props.groupMessage.extra?.yellow ||
+            props.groupMessage.extra?.lifi) && (
+            <>
+              <Separator className="mt-4" />
+              <div className="flex flex-row gap-2 mt-4">
+                {/* Yellow button */}
+                {props.groupMessage.extra?.yellow && (
+                  <GroupMessageYellowMessageSignDrawer
+                    group={props.group}
+                    groupMessage={props.groupMessage}
+                  />
+                )}
+                {/* LI.FI button */}
+                {props.groupMessage.extra?.lifi && (
+                  <Link
+                    href={props.groupMessage.extra.lifi.transactionLink}
+                    target="_blank"
+                  >
+                    <Button variant="outline">
+                      <SquareArrowOutUpRightIcon /> Transaction
+                    </Button>
+                  </Link>
+                )}
+              </div>
+            </>
           )}
         </div>
       </div>

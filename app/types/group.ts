@@ -30,5 +30,8 @@ export type GroupMessage = {
       response?: string; // Response from the Yellow network
       responseCreated?: Date;
     };
+    lifi?: {
+      transactionLink: string;
+    };
   };
 };

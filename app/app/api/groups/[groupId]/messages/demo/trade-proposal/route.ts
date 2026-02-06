@@ -57,9 +57,14 @@ export async function POST(
       id: new ObjectId().toString(),
       created: new Date(),
       creatorAddress: group.agent.address,
+      creatorEnsName: group.agent.ensName,
       creatorRole: "agent",
-      content:
-        "Buying BTC makes sense. I can allocate 1.0 USD from each member, selling when RSI < 30.",
+      content: [
+        "Agreed 💯",
+        "Technicals look primed for a bounce",
+        "I propose buying ENS now and exiting once it clears the immediate $7.20 resistance",
+        "To execute, sign the Yellow message to allocate 1 USDC each",
+      ].join("\n\n"),
       extra: {
         yellow: {
           message: yellowMessage,

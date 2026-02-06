@@ -5,7 +5,6 @@ import { findGroups, insertOrUpdateGroup } from "@/mongodb/services/group";
 import {
   createSubmitAppStateMessage,
   RPCAppSessionAllocation,
-  RPCAppStateIntent,
 } from "@erc7824/nitrolite";
 import { ObjectId } from "mongodb";
 import { NextRequest } from "next/server";
@@ -15,7 +14,7 @@ export async function POST(
   { params }: { params: Promise<{ groupId: string }> },
 ) {
   try {
-    console.log("[API] Creating demo trade withdraw request message...");
+    console.log("[API] Creating demo trade distribute request message...");
 
     const { groupId } = await params;
 
@@ -36,7 +35,7 @@ export async function POST(
       ...group.users.map((user) => ({
         participant: user.address,
         asset: "ytest.usd",
-        amount: Number(10 - 1).toString(),
+        amount: Number(10 + 0.59 / 2).toString(),
       })),
     ];
 
@@ -50,7 +49,6 @@ export async function POST(
         app_session_id: group.yellowAppSessionId as `0x${string}`,
         allocations: yellowAppAllocations,
         version: (group.yellowAppVersion as number) + 1,
-        intent: RPCAppStateIntent.Withdraw,
       },
     );
 
@@ -62,9 +60,8 @@ export async function POST(
       creatorEnsName: group.agent.ensName,
       creatorRole: "agent",
       content: [
-        "Funds allocated 🤝",
-        "Now, please sign this Yellow message to authorize the withdrawal of the USDC to the execution wallet",
-        "I will then route the ENS swap through LI.FI to ensure the best execution price for our entry",
+        "2.59 USDC is ready for payout 💰",
+        "Please sign this final Yellow message to authorize the distribution of the funds back to your individual balances, returning your initial stake plus the shared profit",
       ].join("\n\n"),
       extra: {
         yellow: {
@@ -81,7 +78,7 @@ export async function POST(
     return createSuccessApiResponse({ group });
   } catch (error) {
     console.error(
-      `[API] Failed to create demo trade withdraw request message, error: ${getErrorString(error)}`,
+      `[API] Failed to create demo trade distribute request message, error: ${getErrorString(error)}`,
     );
     return createFailedApiResponse(
       { message: "Internal server error, try again later" },
