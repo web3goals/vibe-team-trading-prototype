@@ -3,6 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 export function AgentCard(props: {
   ensName: string;
   description: string;
+  created: Date;
   creatorEnsName: string;
 }) {
   return (
@@ -15,10 +16,15 @@ export function AgentCard(props: {
           <AvatarFallback>{props.ensName[0].toUpperCase()}</AvatarFallback>
         </Avatar>
         <div>
-          <p className="font-bold">{props.ensName}</p>
+          <div>
+            <p className="font-bold">{props.ensName}</p>
+            <p className="text-sm text-muted-foreground">{props.description}</p>
+          </div>
           <div className="flex flex-col gap-1 mt-4">
-            <p className="text-sm text-muted-foreground">Description</p>
-            <p className="text-sm">{props.description}</p>
+            <p className="text-sm text-muted-foreground">Created</p>
+            <p className="text-sm">
+              {new Date(props.created).toLocaleString()}
+            </p>
           </div>
           <div className="flex flex-col gap-1 mt-4">
             <p className="text-sm text-muted-foreground">Creator</p>

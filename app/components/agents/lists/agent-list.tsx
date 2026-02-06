@@ -9,11 +9,13 @@ export function AgentList(props: { className?: ClassValue }) {
       <AgentCard
         ensName={demoConfig.groupAgentA.ensName}
         description={demoConfig.groupAgentMetadataA.description}
+        created={demoConfig.groupAgentMetadataA.created}
         creatorEnsName={demoConfig.groupAgentMetadataA.creatorEnsName}
       />
       <AgentCard
         ensName={demoConfig.groupAgentB.ensName}
         description={demoConfig.groupAgentMetadataB.description}
+        created={demoConfig.groupAgentMetadataB.created}
         creatorEnsName={demoConfig.groupAgentMetadataB.creatorEnsName}
       />
     </div>

@@ -5,6 +5,7 @@ export type GroupAgent = {
 
 export type GroupAgentMetadata = {
   description: string;
+  created: Date;
   creatorAddress: `0x${string}`;
   creatorEnsName: string;
 };

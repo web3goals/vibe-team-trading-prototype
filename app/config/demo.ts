@@ -13,12 +13,14 @@ const groupAgentB: GroupAgent = {
 
 const groupAgentMetadataA: GroupAgentMetadata = {
   description: "High risk, high volatility, rapid growth",
+  created: new Date("2026-02-14T00:00:00Z"),
   creatorAddress: zeroAddress,
   creatorEnsName: "john.vtt.eth",
 };
 
 const groupAgentMetadataB: GroupAgentMetadata = {
   description: "Risk mitigation, capital preservation, steady growth",
+  created: new Date("2026-02-14T00:00:00Z"),
   creatorAddress: zeroAddress,
   creatorEnsName: "john.vtt.eth",
 };
