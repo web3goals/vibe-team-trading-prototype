@@ -1,97 +1,50 @@
-import { useUser } from "@/components/providers/user-provider";
-import { Button } from "@/components/ui/button";
-import { Spinner } from "@/components/ui/spinner";
-import { confettiConfig } from "@/config/confetti";
-import { handleError } from "@/lib/error";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Separator } from "@/components/ui/separator";
 import { Group } from "@/mongodb/models/group";
 import { GroupMessage } from "@/types/group";
-import { createECDSAMessageSigner, RPCData } from "@erc7824/nitrolite";
-import axios from "axios";
-import confetti from "canvas-confetti";
-import { SignatureIcon } from "lucide-react";
-import { useState } from "react";
-import { toast } from "sonner";
+import { GroupMessageYellowMessageSignDrawer } from "../drawers/group-message-yellow-message-sign-drawer";
 
 export function GroupMessageCard(props: {
   group: Group;
   groupMessage: GroupMessage;
 }) {
-  const { address, sessionAccountPrivateKey } = useUser();
-  const [isProcessing, setIsProcessing] = useState(false);
-
-  // TODO: Implement
-  async function handleSignYellowMessage() {
-    try {
-      console.log("[Component] Sign yellow message...");
-      setIsProcessing(true);
-
-      if (!sessionAccountPrivateKey) {
-        throw new Error("Please sign in");
-      }
-      if (!props.groupMessage.extra?.yellow?.message) {
-        throw new Error("No yellow message to sign");
-      }
-
-      const yellowMessageSigner = createECDSAMessageSigner(
-        sessionAccountPrivateKey as `0x${string}`,
-      );
-
-      const yellowMessageJson = JSON.parse(
-        props.groupMessage.extra.yellow.message,
-      );
-      const signature = await yellowMessageSigner(
-        yellowMessageJson.req as RPCData,
-      );
-
-      // Call API to add signature
-      await axios.patch(
-        `/api/groups/${props.group._id.toString()}/messages/${props.groupMessage.id}/yellow-message-signature`,
-        {
-          address: address,
-          signature: signature,
-        },
-      );
-
-      confetti({ ...confettiConfig });
-      toast.success("Signed");
-    } catch (error) {
-      handleError({ error, toastTitle: "Failed to sign yellow message" });
-    } finally {
-      setIsProcessing(false);
-    }
-  }
-
   return (
     <div className="bg-card border rounded-2xl p-4">
-      <div className="flex flex-col gap-2">
-        <p className="text-sm text-muted-foreground">
-          Created: {new Date(props.groupMessage.created).toLocaleString()}
-        </p>
-        <p className="text-sm text-muted-foreground">
-          Creator role: {props.groupMessage.creatorRole}
-        </p>
-        <p className="text-sm text-muted-foreground">
-          Creator address: {props.groupMessage.creatorAddress}
-        </p>
-        <p className="text-sm text-muted-foreground wrap-break-word">
-          Content: {props.groupMessage.content}
-        </p>
-        {props.groupMessage.extra?.yellow && (
-          <>
-            <p className="text-sm text-muted-foreground">Extra Yellow:</p>
-            <pre className="text-xs text-muted-foreground bg-muted rounded-md whitespace-pre-wrap break-all p-2">
-              {JSON.stringify(props.groupMessage.extra.yellow, null, 2)}
-            </pre>
-          </>
-        )}
+      <div className="flex flex-row gap-4">
+        {/* Left part */}
+        <Avatar className="size-10">
+          <AvatarImage
+            src={`https://api.dicebear.com/9.x/notionists/svg?seed=${props.groupMessage.creatorEnsName}&backgroundColor=${props.groupMessage.creatorRole === "agent" ? "79c0ff" : "8c5cff"}`}
+          />
+          <AvatarFallback>
+            {props.groupMessage.creatorEnsName[0].toUpperCase()}
+          </AvatarFallback>
+        </Avatar>
+        {/* Right part */}
+        <div className="w-full">
+          {/* Creator ENS name, created */}
+          <div>
+            <p className="font-bold">{props.groupMessage.creatorEnsName}</p>
+            <p className="text-sm text-muted-foreground">
+              {new Date(props.groupMessage.created).toLocaleString()}
+            </p>
+          </div>
+          {/* Content */}
+          <div className="text-sm mt-2">
+            <p className="whitespace-pre-wrap">{props.groupMessage.content}</p>
+          </div>
+          {/* Separator for Yellow buttons */}
+          {props.groupMessage.extra?.yellow && <Separator className="mt-4" />}
+          {/* Yellow buttons */}
+          {props.groupMessage.extra?.yellow && (
+            <GroupMessageYellowMessageSignDrawer
+              group={props.group}
+              groupMessage={props.groupMessage}
+              className="mt-4"
+            />
+          )}
+        </div>
       </div>
-      <Button
-        disabled={isProcessing}
-        onClick={() => handleSignYellowMessage()}
-        className="mt-2"
-      >
-        {isProcessing ? <Spinner /> : <SignatureIcon />} Sign Yellow message
-      </Button>
     </div>
   );
 }
