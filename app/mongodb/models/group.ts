@@ -8,6 +8,7 @@ export class Group {
     public created: Date,
     public status: "active" | "closed",
     public name: string,
+    public description: string,
     public agent: GroupAgent,
     public users: GroupUser[],
     public messages: GroupMessage[],

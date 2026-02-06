@@ -2,6 +2,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Group } from "@/mongodb/models/group";
+import { ChevronRightIcon } from "lucide-react";
 import Link from "next/link";
 
 export function GroupCard(props: { group: Group }) {
@@ -14,7 +15,12 @@ export function GroupCard(props: { group: Group }) {
           </AvatarFallback>
         </Avatar>
         <div className="w-full">
-          <p className="font-bold">{props.group.name}</p>
+          <div>
+            <p className="font-bold">{props.group.name}</p>
+            <p className="text-sm text-muted-foreground">
+              {props.group.description}
+            </p>
+          </div>
           <div className="flex flex-col gap-1 mt-4">
             <p className="text-sm text-muted-foreground">Created</p>
             <p className="text-sm">
@@ -53,7 +59,9 @@ export function GroupCard(props: { group: Group }) {
           </div>
           <Separator className="mt-4" />
           <Link href={`/groups/${props.group._id.toString()}`}>
-            <Button className="mt-4">Open group</Button>
+            <Button className="mt-4">
+              <ChevronRightIcon /> Open group
+            </Button>
           </Link>
         </div>
       </div>

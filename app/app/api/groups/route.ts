@@ -14,6 +14,7 @@ import { createAppSessionMessage as createCreateAppSessionMessage } from "@erc78
 import { ObjectId } from "mongodb";
 import { NextRequest } from "next/server";
 import z from "zod";
+import { describe } from "zod/v4/core";
 
 export async function GET(request: NextRequest) {
   try {
@@ -76,6 +77,7 @@ export async function POST(request: NextRequest) {
     // Define the schema for request body validation
     const bodySchema = z.object({
       name: z.string(),
+      description: z.string(),
       agent: z.object({
         address: z.string(),
         ensName: z.string(),
@@ -106,6 +108,7 @@ export async function POST(request: NextRequest) {
 
     // Extract validated data
     const name = bodyParseResult.data.name;
+    const description = bodyParseResult.data.description;
     const agent: GroupAgent = {
       address: bodyParseResult.data.agent.address as `0x${string}`,
       ensName: bodyParseResult.data.agent.ensName,
@@ -177,6 +180,7 @@ export async function POST(request: NextRequest) {
       created: new Date(),
       status: "active",
       name: name,
+      description: description,
       agent: agent,
       users: users,
       messages: messages,
