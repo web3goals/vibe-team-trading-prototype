@@ -19,7 +19,7 @@ export function IndexHeroSection(props: { className?: ClassValue }) {
       />
       {/* Title, subtitle */}
       <h2 className="text-3xl font-bold tracking-tight text-center mt-6">
-        Vibe together, trade together, and let AI do the heavy lifting
+        Vibe together, trade together, and let AI do the heavy lifting!
       </h2>
       <h4 className="text-xl text-muted-foreground tracking-tight text-center mt-2">
         AI-powered social platform that executes crypto trades based on your
