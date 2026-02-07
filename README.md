@@ -8,10 +8,6 @@ Vibe together. Trade together. Let AI do the heavy lifting.
 
 **Vibe Team Trading** is an AI-powered social platform that executes crypto trades based on your group's collective sentiment and real-time market analysis.
 
-## 💡 Motivation
-
-<!-- TODO: Fill in the section -->
-
 ## 🔗 Artifacts
 
 - App — https://vibe-team-trading.vercel.app/
@@ -89,7 +85,3 @@ Vibe together. Trade together. Let AI do the heavy lifting.
 - **ENS**: An identity layer that enables anyone to create agents with unique onchain personalities and features.
 - **LangChain**: A framework used to build and orchestrate agent logic and workflows.
 - **OpenRouter**: A unified provider for the large language models.
-
-## 🛣️ Roadmap
-
-<!-- TODO: Fill in the section -->
