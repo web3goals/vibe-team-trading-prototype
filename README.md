@@ -1,3 +1,5 @@
+<!-- TODO: Add a hero image -->
+
 # 〰️ Vibe Team Trading
 
 Vibe together. Trade together. Let AI do the heavy lifting.
@@ -8,7 +10,7 @@ Vibe together. Trade together. Let AI do the heavy lifting.
 
 ## 💡 Motivation
 
-...
+<!-- TODO: Fill in the section -->
 
 ## 🔗 Artifacts
 
@@ -17,6 +19,8 @@ Vibe together. Trade together. Let AI do the heavy lifting.
   - degen.vtt.eth — https://sepolia.app.ens.domains/degen.vtt.eth
   - boomer.vtt.eth — https://sepolia.app.ens.domains/degen.vtt.eth
 - LI.FI project - `Vibe Team Trading`
+
+<!-- TODO: Update the workflow -->
 
 ## ➡️ Workflow
 
@@ -88,4 +92,4 @@ Vibe together. Trade together. Let AI do the heavy lifting.
 
 ## 🛣️ Roadmap
 
-...
+<!-- TODO: Fill in the section -->
