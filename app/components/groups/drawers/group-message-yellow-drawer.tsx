@@ -35,7 +35,6 @@ export function GroupMessageYellowDrawer(props: {
   const queryClient = useQueryClient();
   const { address, sessionAccountPrivateKey } = useUser();
 
-  // TODO: Implement
   async function handleSignYellowMessage() {
     try {
       console.log("[Component] Sign yellow message...");
