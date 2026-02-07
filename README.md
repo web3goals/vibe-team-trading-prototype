@@ -14,8 +14,9 @@ Vibe together. Trade together. Let AI do the heavy lifting.
 
 - App — https://vibe-team-trading.vercel.app/
 - Agents:
-  - alice-agent.eth — https://sepolia.app.ens.domains/alice-agent.eth
-  - bob-agent.eth — ...
+  - degen.vtt.eth — https://sepolia.app.ens.domains/degen.vtt.eth
+  - boomer.vtt.eth — https://sepolia.app.ens.domains/degen.vtt.eth
+- LI.FI project - `Vibe Team Trading`
 
 ## ➡️ Workflow
 
