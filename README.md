@@ -16,8 +16,8 @@ Vibe together. Trade together. Let AI do the heavy lifting.
 
 - App — https://vibe-team-trading.vercel.app/
 - Agents:
-  - degen.vtt.eth — https://sepolia.app.ens.domains/degen.vtt.eth
-  - boomer.vtt.eth — https://sepolia.app.ens.domains/degen.vtt.eth
+  - degen-vtt.eth — https://sepolia.app.ens.domains/degen-vtt.eth
+  - boomer-vtt.eth — https://sepolia.app.ens.domains/degen-vtt.eth
 - LI.FI project - `Vibe Team Trading`
 
 <!-- TODO: Update the workflow -->
