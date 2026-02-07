@@ -107,10 +107,12 @@ export function HeaderMenu() {
             />
             <AvatarFallback>{ensName[0].toUpperCase()}</AvatarFallback>
           </Avatar>
-          <span>{ensName}</span>
-          <span className="text-muted-foreground">
-            {shortenAddress(demoConfig.groupUserA.address)}
-          </span>
+          <div className="flex flex-col md:flex-row md:gap-1">
+            <span>{ensName}</span>
+            <span className="text-muted-foreground">
+              {shortenAddress(address)}
+            </span>
+          </div>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">

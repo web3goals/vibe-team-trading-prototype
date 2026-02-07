@@ -45,7 +45,7 @@ export function GroupMessageCard(props: {
             props.groupMessage.extra?.lifi) && (
             <>
               <Separator className="mt-4" />
-              <div className="flex flex-row gap-2 mt-4">
+              <div className="flex flex-col md:flex-row gap-2 mt-4">
                 {/* Yellow button */}
                 {props.groupMessage.extra?.yellow && (
                   <GroupMessageYellowDrawer
