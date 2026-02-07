@@ -31,7 +31,7 @@ export type GroupMessage = {
       responseCreated?: Date;
     };
     lifi?: {
-      transactionLink: string;
+      executeRouteResponse: string;
     };
   };
 };

@@ -1,4 +1,5 @@
 import { useUser } from "@/components/providers/user-provider";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   Drawer,
@@ -21,11 +22,10 @@ import { useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import confetti from "canvas-confetti";
 import { ClassValue } from "clsx";
-import { SignatureIcon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
-export function GroupMessageYellowMessageSignDrawer(props: {
+export function GroupMessageYellowDrawer(props: {
   group: Group;
   groupMessage: GroupMessage;
   className?: ClassValue;
@@ -93,7 +93,6 @@ export function GroupMessageYellowMessageSignDrawer(props: {
 
   return (
     <Drawer
-      repositionInputs={false}
       open={isOpen}
       onOpenChange={(open) => {
         if (!isProcessing) {
@@ -102,14 +101,16 @@ export function GroupMessageYellowMessageSignDrawer(props: {
       }}
     >
       <DrawerTrigger asChild>
-        <Button variant="default" className={cn(props.className)}>
-          <SignatureIcon />
-          Sign Yellow message
+        <Button variant="outline" className={cn(props.className)}>
+          <Avatar className="size-4">
+            <AvatarImage src="/images/yellow.png" />
+          </Avatar>
+          Open Yellow message
         </Button>
       </DrawerTrigger>
       <DrawerContent>
         <DrawerHeader>
-          <DrawerTitle>Yellow message signing</DrawerTitle>
+          <DrawerTitle>Yellow message</DrawerTitle>
           <DrawerDescription>
             Vibe together, trade together, and let AI do the heavy lifting
           </DrawerDescription>

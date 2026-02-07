@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { shortenAddress } from "@/lib/address";
 import { Group } from "@/mongodb/models/group";
-import { ChevronRightIcon } from "lucide-react";
+import { UsersRoundIcon } from "lucide-react";
 import Link from "next/link";
 
 export function GroupCard(props: { group: Group }) {
@@ -74,7 +74,7 @@ export function GroupCard(props: { group: Group }) {
           {/* Buttons */}
           <Link href={`/groups/${props.group._id.toString()}`}>
             <Button className="mt-4">
-              <ChevronRightIcon /> Open group
+              <UsersRoundIcon /> Open group
             </Button>
           </Link>
         </div>

@@ -1,12 +1,10 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { shortenAddress } from "@/lib/address";
 import { Group } from "@/mongodb/models/group";
 import { GroupMessage } from "@/types/group";
-import { SquareArrowOutUpRightIcon } from "lucide-react";
-import Link from "next/link";
-import { GroupMessageYellowMessageSignDrawer } from "../drawers/group-message-yellow-message-sign-drawer";
+import { GroupMessageLifiDrawer } from "../drawers/group-message-lifi-drawer";
+import { GroupMessageYellowDrawer } from "../drawers/group-message-yellow-drawer";
 
 export function GroupMessageCard(props: {
   group: Group;
@@ -50,21 +48,14 @@ export function GroupMessageCard(props: {
               <div className="flex flex-row gap-2 mt-4">
                 {/* Yellow button */}
                 {props.groupMessage.extra?.yellow && (
-                  <GroupMessageYellowMessageSignDrawer
+                  <GroupMessageYellowDrawer
                     group={props.group}
                     groupMessage={props.groupMessage}
                   />
                 )}
                 {/* LI.FI button */}
                 {props.groupMessage.extra?.lifi && (
-                  <Link
-                    href={props.groupMessage.extra.lifi.transactionLink}
-                    target="_blank"
-                  >
-                    <Button variant="outline">
-                      <SquareArrowOutUpRightIcon /> LI.FI Transaction
-                    </Button>
-                  </Link>
+                  <GroupMessageLifiDrawer groupMessage={props.groupMessage} />
                 )}
               </div>
             </>
