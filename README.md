@@ -1,4 +1,4 @@
-<!-- TODO: Add a hero image -->
+![Hero](/hero.png)
 
 # 〰️ Vibe Team Trading
 
