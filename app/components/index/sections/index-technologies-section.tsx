@@ -83,7 +83,7 @@ export function IndexTechnologiesSection(props: { className?: ClassValue }) {
           <ItemContent>
             <ItemTitle>OpenRouter</ItemTitle>
             <ItemDescription className="text-wrap">
-              A unified provider for the large language models
+              A unified provider for large language models
             </ItemDescription>
           </ItemContent>
         </Item>
