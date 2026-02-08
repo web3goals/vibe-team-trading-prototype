@@ -3,6 +3,9 @@ import { Separator } from "@/components/ui/separator";
 import { shortenAddress } from "@/lib/address";
 import { Group } from "@/mongodb/models/group";
 import { GroupMessage } from "@/types/group";
+import ReactMarkdown from "react-markdown";
+import remarkBreaks from "remark-breaks";
+import remarkGfm from "remark-gfm";
 import { GroupMessageLifiDrawer } from "../drawers/group-message-lifi-drawer";
 import { GroupMessageYellowDrawer } from "../drawers/group-message-yellow-drawer";
 
@@ -38,7 +41,34 @@ export function GroupMessageCard(props: {
           </div>
           {/* Content */}
           <div className="text-sm mt-4">
-            <p className="whitespace-pre-wrap">{props.groupMessage.content}</p>
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm, remarkBreaks]}
+              components={{
+                p: ({ node, ...props }) => {
+                  void node;
+                  return <p className="mb-4 last:mb-0" {...props} />;
+                },
+                pre: ({ node, ...props }) => {
+                  void node;
+                  return (
+                    <div className="overflow-auto w-full my-2 bg-black/10 dark:bg-black/30 p-2 rounded-md">
+                      <pre {...props} />
+                    </div>
+                  );
+                },
+                code: ({ node, ...props }) => {
+                  void node;
+                  return (
+                    <code
+                      className="bg-black/10 dark:bg-black/30 rounded-sm px-1 py-0.5"
+                      {...props}
+                    />
+                  );
+                },
+              }}
+            >
+              {props.groupMessage.content}
+            </ReactMarkdown>
           </div>
           {/* Separator for Yellow and LI.FI buttons */}
           {(props.groupMessage.extra?.yellow ||
