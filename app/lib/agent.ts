@@ -2,7 +2,11 @@ import { BaseMessage } from "@langchain/core/messages";
 import { ChatOpenAI } from "@langchain/openai";
 import { createAgent, tool } from "langchain";
 import { z } from "zod";
-import { createGroupMessage, getGroupMessages } from "./agent-tools";
+import {
+  createGroupMessage,
+  createGroupMessageWithTradeProposal,
+  getGroupMessages,
+} from "./agent-tools";
 import { findGroups } from "@/mongodb/services/group";
 
 const model = new ChatOpenAI({
@@ -51,6 +55,31 @@ const createGroupMessageTool = tool(
   },
 );
 
+const createGroupMessageWithTradeProposalTool = tool(
+  async (input) =>
+    await createGroupMessageWithTradeProposal(
+      input.groupId,
+      input.agentAddress,
+      input.agentEnsName,
+      input.content,
+    ),
+  {
+    name: "create_group_message_with_trade_proposal",
+    description:
+      "Creates a group message with the provided content and a trade proposal.",
+    schema: z.object({
+      groupId: z.string().describe("ID of the group to create the message in."),
+      agentAddress: z
+        .string()
+        .describe("Address of the agent creating the message."),
+      agentEnsName: z
+        .string()
+        .describe("ENS name of the agent creating the message."),
+      content: z.string().describe("Content of the group message to create."),
+    }),
+  },
+);
+
 const systemPrompt = (
   groupId: string,
   agentAddress: string,
@@ -61,14 +90,18 @@ You are an AI Trading Agent in a group chat. Your goal is to analyze messages an
 
 # Style Guidelines
 - **Use Emojis:** Engage users with emojis (🚀, 💰, 🔍, ✅, 📊).
+- **Emoji Placement:** Do NOT put a period (.) between the end of a sentence and an emoji. (e.g., "I propose we buy BTC ✅" instead of "I propose we buy BTC. ✅").
 - **Be Concise:** Keep responses short and direct.
 
 # Workflow: Propose a trade
 1. **Fetch Messages:** Call the tool \`get_group_messages\` to retrieve recent conversation history.
 2. **Analyze & Evaluate:** Scan the messages for token mentions and justifications for buying (e.g., market trends, news, or technical analysis).
 3. **Execute Action:**
-   - **If arguments are found:** Propose a trade by calling \`create_group_message\`. Content should be like: "I propose buying {TOKEN} 🚀. Arguments: {SUMMARY_OF_ARGUMENTS}."
-   - **If no arguments are found:** Do NOT call \`create_group_message\`. Instead, finish the task by stating that no clear trading opportunities were identified.
+   - **If arguments are found:** Propose a trade by calling \`create_group_message_with_trade_proposal\`. Content should contain:
+     - Your proposal to buy {token}.
+     - A statement that your own technical and sentiment analysis approves the proposal.
+     - A note that users need to sign the Yellow message to allocate 1 USDC each to execute the trade.
+   - **If no arguments are found:** Do NOT call any message creation tool. Instead, finish the task by stating that no clear trading opportunities were identified.
 
 # Context
 - **Group ID:** ${groupId}
@@ -92,7 +125,11 @@ export async function invokeAgent(
   // Create the agent with tools and system prompt
   const agent = createAgent({
     model,
-    tools: [getGroupMessagesTool, createGroupMessageTool],
+    tools: [
+      getGroupMessagesTool,
+      createGroupMessageTool,
+      createGroupMessageWithTradeProposalTool,
+    ],
     systemPrompt: systemPrompt(
       groupId,
       group.agent.address,
