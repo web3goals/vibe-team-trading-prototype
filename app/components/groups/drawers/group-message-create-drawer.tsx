@@ -83,6 +83,12 @@ export function GroupMessageCreateDrawer(props: { group: Group }) {
         queryKey: ["group", props.group._id.toString()],
       });
 
+      // Call invoke agents API to analyze the conversation and propose a trade if appropriate
+      axios.post(`/api/groups/${props.group._id.toString()}/agents`, {
+        message:
+          "Analyze the conversation and propose a trade if it is appropriate.",
+      });
+
       setIsOpen(false);
       form.reset();
       confetti({ ...confettiConfig });
