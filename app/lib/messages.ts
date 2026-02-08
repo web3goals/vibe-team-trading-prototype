@@ -4,12 +4,14 @@ import {
   createAppSessionMessage as createCreateAppSessionMessage,
   createSubmitAppStateMessage,
   RPCAppSessionAllocation,
+  RPCAppStateIntent,
 } from "@erc7824/nitrolite";
 import { ObjectId } from "mongodb";
 import { getAgentYellowMessageSigner } from "./agent-utils";
 
 export async function getMessageWithCreateAppSessionRequest(
   group: Group,
+  content: string,
 ): Promise<GroupMessage> {
   // Define Yellow app allocations
   // TODO: Calculate allocation amounts dynamically
@@ -46,10 +48,7 @@ export async function getMessageWithCreateAppSessionRequest(
     creatorAddress: group.agent.address,
     creatorEnsName: group.agent.ensName,
     creatorRole: "agent",
-    content: [
-      "Group created 🎉",
-      "To start vibe team trading, everyone needs to sign the Yellow message so I can set up our Yellow app session",
-    ].join("\n\n"),
+    content: content,
     extra: {
       yellow: {
         message: yellowMessage,
@@ -64,6 +63,7 @@ export async function getMessageWithCreateAppSessionRequest(
 
 export function getMessageWithCreateAppSessionStatus(
   group: Group,
+  content: string,
 ): GroupMessage {
   const message: GroupMessage = {
     id: new ObjectId().toString(),
@@ -72,7 +72,7 @@ export function getMessageWithCreateAppSessionStatus(
     creatorAddress: group.agent.address,
     creatorEnsName: group.agent.ensName,
     creatorRole: "agent",
-    content: "Yellow app session set up successfully 👍",
+    content: content,
   };
 
   return message;
@@ -110,6 +110,56 @@ export async function getMessageWithStartTradeRequest(
   const message: GroupMessage = {
     id: new ObjectId().toString(),
     category: "start_trade_request",
+    created: new Date(),
+    creatorAddress: group.agent.address,
+    creatorEnsName: group.agent.ensName,
+    creatorRole: "agent",
+    content: content,
+    extra: {
+      yellow: {
+        message: yellowMessage,
+        messageCreated: new Date(),
+        messageSignerAddresses: [group.agent.address],
+      },
+    },
+  };
+
+  return message;
+}
+
+export async function getMessageWithWithdrawRequest(
+  group: Group,
+  content: string,
+): Promise<GroupMessage> {
+  // Define Yellow app allocations
+  // TODO: Calculate allocation amounts dynamically
+  const yellowAppAllocations: RPCAppSessionAllocation[] = [
+    {
+      participant: group.agent.address,
+      asset: "ytest.usd",
+      amount: Number(0).toString(),
+    },
+    ...group.users.map((user) => ({
+      participant: user.address,
+      asset: "ytest.usd",
+      amount: Number(10 - 1).toString(),
+    })),
+  ];
+
+  // Create Yellow submit app state message signed by the agent
+  const yellowMessageSigner = await getAgentYellowMessageSigner(
+    group.agent.address,
+  );
+  const yellowMessage = await createSubmitAppStateMessage(yellowMessageSigner, {
+    app_session_id: group.yellowAppSessionId as `0x${string}`,
+    allocations: yellowAppAllocations,
+    version: (group.yellowAppVersion as number) + 1,
+    intent: RPCAppStateIntent.Withdraw,
+  });
+
+  const message: GroupMessage = {
+    id: new ObjectId().toString(),
+    category: "withdraw_request",
     created: new Date(),
     creatorAddress: group.agent.address,
     creatorEnsName: group.agent.ensName,

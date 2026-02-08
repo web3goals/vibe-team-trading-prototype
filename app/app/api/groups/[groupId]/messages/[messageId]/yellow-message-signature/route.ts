@@ -1,7 +1,10 @@
 import { sendYellowMessageByAgent } from "@/lib/agent-utils";
 import { createFailedApiResponse, createSuccessApiResponse } from "@/lib/api";
 import { getErrorString } from "@/lib/error";
-import { getMessageWithCreateAppSessionStatus } from "@/lib/messages";
+import {
+  getMessageWithCreateAppSessionStatus,
+  getMessageWithWithdrawRequest,
+} from "@/lib/messages";
 import { findGroups, insertOrUpdateGroup } from "@/mongodb/services/group";
 import { RPCMethod } from "@erc7824/nitrolite";
 import { NextRequest } from "next/server";
@@ -78,13 +81,27 @@ export async function PATCH(
       group.yellowAppVersion = yellowResponseJson.params.version;
     }
 
-    // Save Yellow app session ID and add a new message
+    // Save Yellow app session ID and add a new message with create app session status
     if (
       yellowResponseJson.method !== RPCMethod.Error &&
       message.category === "create_app_session_request"
     ) {
       group.yellowAppSessionId = yellowResponseJson.params.appSessionId;
-      group.messages.push(getMessageWithCreateAppSessionStatus(group));
+      const content = "Yellow app session set up successfully 👍";
+      group.messages.push(getMessageWithCreateAppSessionStatus(group, content));
+    }
+
+    // Add a new message with withdraw request
+    if (
+      yellowResponseJson.method !== RPCMethod.Error &&
+      message.category === "start_trade_request"
+    ) {
+      const content = [
+        "Funds allocated 🤝",
+        "Now, please sign this Yellow message to authorize the withdrawal of the USDC to the execution wallet",
+        "I will then route the swap through LI.FI to ensure the best execution price for our entry",
+      ].join("\n\n");
+      group.messages.push(await getMessageWithWithdrawRequest(group, content));
     }
 
     // Update the group in the database

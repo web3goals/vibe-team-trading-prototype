@@ -156,7 +156,11 @@ export async function POST(request: NextRequest) {
     };
 
     // Create and add the initial message with the Yellow create app session request
-    const message = await getMessageWithCreateAppSessionRequest(group);
+    const content = [
+      "Group created 🎉",
+      "To start vibe team trading, everyone needs to sign the Yellow message so I can set up our Yellow app session",
+    ].join("\n\n");
+    const message = await getMessageWithCreateAppSessionRequest(group, content);
     group.messages.push(message);
 
     // Insert the group into the database
