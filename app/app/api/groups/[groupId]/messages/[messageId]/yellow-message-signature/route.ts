@@ -1,4 +1,4 @@
-import { sendYellowMessageByAgent } from "@/lib/agent";
+import { sendYellowMessageByAgent } from "@/lib/agent-utils";
 import { createFailedApiResponse, createSuccessApiResponse } from "@/lib/api";
 import { getErrorString } from "@/lib/error";
 import { findGroups, insertOrUpdateGroup } from "@/mongodb/services/group";

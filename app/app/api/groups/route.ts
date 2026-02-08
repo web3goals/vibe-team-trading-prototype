@@ -1,6 +1,6 @@
 import { demoConfig } from "@/config/demo";
 import { yellowConfig } from "@/config/yellow";
-import { getAgentYellowMessageSigner } from "@/lib/agent";
+import { getAgentYellowMessageSigner } from "@/lib/agent-utils";
 import { createFailedApiResponse, createSuccessApiResponse } from "@/lib/api";
 import { getErrorString } from "@/lib/error";
 import { Group } from "@/mongodb/models/group";

@@ -1,5 +1,5 @@
 import { demoConfig } from "@/config/demo";
-import { executeLiFiTradeByAgent } from "@/lib/agent";
+import { executeLiFiTradeByAgent } from "@/lib/agent-utils";
 import { createFailedApiResponse, createSuccessApiResponse } from "@/lib/api";
 import { getErrorString } from "@/lib/error";
 
