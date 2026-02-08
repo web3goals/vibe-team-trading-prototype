@@ -1,6 +1,8 @@
 import { createFailedApiResponse, createSuccessApiResponse } from "@/lib/api";
 import { getErrorString } from "@/lib/error";
 import {
+  getMessageWithDistributeRequest,
+  getMessageWithDistributeStatus,
   getMessageWithEntryTradeStatus,
   getMessageWithExitTradeStatus,
   getMessageWithStartTradeRequest,
@@ -27,6 +29,8 @@ export async function POST(
         "withdraw_request",
         "entry_trade_status",
         "exit_trade_status",
+        "distribute_request",
+        "distribute_status",
       ]),
     });
 
@@ -99,6 +103,17 @@ export async function POST(
         content,
         extraLifiExecuteRouteResponse,
       );
+    }
+    if (category === "distribute_request") {
+      const content = [
+        "2.59 USDC is ready for payout 💰",
+        "Please sign this final Yellow message to authorize the distribution of the funds back to your individual balances, returning your initial stake plus the shared profit",
+      ].join("\n\n");
+      message = await getMessageWithDistributeRequest(group, content);
+    }
+    if (category === "distribute_status") {
+      const content = "Distribution complete 👌";
+      message = await getMessageWithDistributeStatus(group, content);
     }
 
     // Add message to the group and save to database
