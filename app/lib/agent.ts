@@ -9,18 +9,6 @@ import { Client } from "yellow-ts";
 import { executeLifiRoute } from "./lifi";
 import { authenticateWalletInYellow } from "./yellow";
 
-export function getAgentPrivateKey(
-  agentAddress: `0x${string}`,
-): string | undefined {
-  if (getAddress(agentAddress) === getAddress(demoConfig.groupAgentA.address)) {
-    return process.env.AGENT_A_PRIVATE_KEY;
-  }
-  if (getAddress(agentAddress) === getAddress(demoConfig.groupAgentB.address)) {
-    return process.env.AGENT_B_PRIVATE_KEY;
-  }
-  return undefined;
-}
-
 export async function getAgentYellowMessageSigner(
   agentAddress: `0x${string}`,
 ): Promise<MessageSigner> {
@@ -81,4 +69,14 @@ export async function executeLiFiTradeByAgent(
     fromAmount: "100000", // 0.1 USDC
     fromAddress: agentAddress, // The address from which the tokens are being transferred
   });
+}
+
+function getAgentPrivateKey(agentAddress: `0x${string}`): string | undefined {
+  if (getAddress(agentAddress) === getAddress(demoConfig.groupAgentA.address)) {
+    return process.env.AGENT_A_PRIVATE_KEY;
+  }
+  if (getAddress(agentAddress) === getAddress(demoConfig.groupAgentB.address)) {
+    return process.env.AGENT_B_PRIVATE_KEY;
+  }
+  return undefined;
 }
