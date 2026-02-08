@@ -1,3 +1,4 @@
+import { useUser } from "@/components/providers/user-provider";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -72,6 +73,7 @@ export function GroupCreateDrawer() {
   const [isOpen, setIsOpen] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const queryClient = useQueryClient();
+  const { address } = useUser();
 
   const formSchema = z.object({
     name: z.string().min(1, "Name cannot be empty").max(50, "Name is too long"),
@@ -100,6 +102,11 @@ export function GroupCreateDrawer() {
     try {
       console.log("[Component] Creating group...");
       setIsProcessing(true);
+
+      if (!address) {
+        setIsOpen(false);
+        throw new Error("Please sign in");
+      }
 
       // Call create group API
       await axios.post("/api/groups", {

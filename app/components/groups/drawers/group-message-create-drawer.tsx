@@ -65,6 +65,10 @@ export function GroupMessageCreateDrawer(props: { group: Group }) {
         setIsOpen(false);
         throw new Error("You must be a member of the group to post a message");
       }
+      if (!props.group.yellowAppSessionId) {
+        setIsOpen(false);
+        throw new Error("Yellow app is not set up for this group");
+      }
 
       // Call create group API
       await axios.post(`/api/groups/${props.group._id.toString()}/messages`, {
