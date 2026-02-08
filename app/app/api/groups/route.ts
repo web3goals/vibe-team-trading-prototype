@@ -7,11 +7,11 @@ import { Group } from "@/mongodb/models/group";
 import { findGroups, insertOrUpdateGroup } from "@/mongodb/services/group";
 import { GroupAgent, GroupMessage, GroupUser } from "@/types/group";
 import {
+  createAppSessionMessage as createCreateAppSessionMessage,
   RPCAppDefinition,
   RPCAppSessionAllocation,
   RPCProtocolVersion,
 } from "@erc7824/nitrolite";
-import { createAppSessionMessage as createCreateAppSessionMessage } from "@erc7824/nitrolite";
 import { ObjectId } from "mongodb";
 import { NextRequest } from "next/server";
 import z from "zod";
