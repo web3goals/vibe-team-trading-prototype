@@ -25,7 +25,6 @@ export async function POST(
     }
 
     // Define new Yellow allocations
-    // TODO: Calculate based on the previous state
     const yellowAppAllocations: RPCAppSessionAllocation[] = [
       {
         participant: group.agent.address,

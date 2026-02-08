@@ -9,7 +9,6 @@ import {
 import { ObjectId } from "mongodb";
 import { NextRequest } from "next/server";
 
-// TODO: Unify all demo APIs
 export async function POST(
   _request: NextRequest,
   { params }: { params: Promise<{ groupId: string }> },
@@ -26,7 +25,6 @@ export async function POST(
     }
 
     // Define new Yellow allocations
-    // TODO: Calculate based on the previous state
     const yellowAppAllocations: RPCAppSessionAllocation[] = [
       {
         participant: group.agent.address,
