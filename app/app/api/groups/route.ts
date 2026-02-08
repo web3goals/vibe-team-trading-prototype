@@ -177,6 +177,7 @@ export async function POST(request: NextRequest) {
     const messages: GroupMessage[] = [];
     messages.push({
       id: new ObjectId().toString(),
+      category: "sign_yellow_create_app_session_message",
       created: new Date(),
       creatorAddress: agent.address,
       creatorEnsName: agent.ensName,

@@ -51,6 +51,7 @@ export async function createGroupMessage(
     // Add message to the group and save to database
     group.messages.push({
       id: new ObjectId().toString(),
+      category: "none",
       created: new Date(),
       creatorAddress: agentAddress as `0x${string}`,
       creatorEnsName: agentEnsName,
@@ -115,6 +116,8 @@ export async function createGroupMessageWithTradeProposal(
     // Add message to the group and save to database
     group.messages.push({
       id: new ObjectId().toString(),
+      category:
+        "sign_yellow_submit_app_state_message_to_approve_trade_proposal",
       created: new Date(),
       creatorAddress: agentAddress as `0x${string}`,
       creatorEnsName: agentEnsName,

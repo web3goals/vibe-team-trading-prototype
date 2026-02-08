@@ -73,28 +73,26 @@ export async function PATCH(
     // Parse the Yellow response JSON
     const yellowResponseJson = JSON.parse(message.extra.yellow.response);
 
-    // Save Yellow app session ID to the group and add a new message that Yellow app session was set up successfully
+    // Save Yellow app version
+    if (yellowResponseJson.method !== RPCMethod.Error) {
+      group.yellowAppVersion = yellowResponseJson.params.version;
+    }
+
+    // Save Yellow app session ID and add a new message that Yellow app session was set up successfully
     if (
-      yellowResponseJson.method === RPCMethod.CreateAppSession &&
-      yellowResponseJson.params.appSessionId
+      yellowResponseJson.method !== RPCMethod.Error &&
+      message.category === "sign_yellow_create_app_session_message"
     ) {
       group.yellowAppSessionId = yellowResponseJson.params.appSessionId;
       group.messages.push({
         id: new ObjectId().toString(),
+        category: "none",
         created: new Date(),
         creatorAddress: group.agent.address,
         creatorEnsName: group.agent.ensName,
         creatorRole: "agent",
         content: "Yellow app session set up successfully 👍",
       });
-    }
-
-    // Save Yellow app version to the group
-    if (
-      yellowResponseJson.method !== RPCMethod.Error &&
-      yellowResponseJson.params.version
-    ) {
-      group.yellowAppVersion = yellowResponseJson.params.version;
     }
 
     // Update the group in the database

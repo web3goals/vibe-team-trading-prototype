@@ -17,6 +17,11 @@ export type GroupUser = {
 
 export type GroupMessage = {
   id: string;
+  category:
+    | "none"
+    | "sign_yellow_create_app_session_message"
+    | "sign_yellow_submit_app_state_message_to_approve_trade_proposal"
+    | "sign_yellow_submit_app_state_message_to_approve_withdraw";
   created: Date;
   creatorAddress: `0x${string}`;
   creatorEnsName: string;

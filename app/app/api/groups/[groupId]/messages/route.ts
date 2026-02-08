@@ -51,6 +51,7 @@ export async function POST(
     // Add message to the group and save to database
     group.messages.push({
       id: new ObjectId().toString(),
+      category: "none",
       created: new Date(),
       creatorAddress: creatorAddress as `0x${string}`,
       creatorEnsName: creatorEnsName,
