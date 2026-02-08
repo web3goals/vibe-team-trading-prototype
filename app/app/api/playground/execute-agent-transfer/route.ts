@@ -16,7 +16,7 @@ import {
   createECDSAMessageSigner,
   createGetLedgerBalancesMessage,
   createSubmitAppStateMessage,
-} from "@erc7824/nitrolite/dist/rpc/api";
+} from "@erc7824/nitrolite";
 import { createWalletClient, http, WalletClient } from "viem";
 import { Account, privateKeyToAccount } from "viem/accounts";
 import { sepolia } from "viem/chains";
