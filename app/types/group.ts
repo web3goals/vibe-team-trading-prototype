@@ -19,9 +19,18 @@ export type GroupMessage = {
   id: string;
   category:
     | "none"
-    | "sign_yellow_create_app_session_message"
-    | "sign_yellow_submit_app_state_message_to_approve_trade_proposal"
-    | "sign_yellow_submit_app_state_message_to_approve_withdraw";
+    | "create_app_session_request"
+    | "create_app_session_status"
+    | "start_trade_request"
+    | "start_trade_status"
+    | "withdraw_request"
+    | "withdraw_status"
+    | "entry_trade_status"
+    | "exit_trade_status"
+    | "deposit_request"
+    | "deposit_status"
+    | "distribute_request"
+    | "distribute_status";
   created: Date;
   creatorAddress: `0x${string}`;
   creatorEnsName: string;

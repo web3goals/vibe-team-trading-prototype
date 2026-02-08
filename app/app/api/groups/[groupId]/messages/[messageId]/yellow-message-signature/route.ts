@@ -1,9 +1,9 @@
 import { sendYellowMessageByAgent } from "@/lib/agent-utils";
 import { createFailedApiResponse, createSuccessApiResponse } from "@/lib/api";
 import { getErrorString } from "@/lib/error";
+import { getMessageWithCreateAppSessionStatus } from "@/lib/messages";
 import { findGroups, insertOrUpdateGroup } from "@/mongodb/services/group";
 import { RPCMethod } from "@erc7824/nitrolite";
-import { ObjectId } from "mongodb";
 import { NextRequest } from "next/server";
 import z from "zod";
 
@@ -78,21 +78,13 @@ export async function PATCH(
       group.yellowAppVersion = yellowResponseJson.params.version;
     }
 
-    // Save Yellow app session ID and add a new message that Yellow app session was set up successfully
+    // Save Yellow app session ID and add a new message
     if (
       yellowResponseJson.method !== RPCMethod.Error &&
-      message.category === "sign_yellow_create_app_session_message"
+      message.category === "create_app_session_request"
     ) {
       group.yellowAppSessionId = yellowResponseJson.params.appSessionId;
-      group.messages.push({
-        id: new ObjectId().toString(),
-        category: "none",
-        created: new Date(),
-        creatorAddress: group.agent.address,
-        creatorEnsName: group.agent.ensName,
-        creatorRole: "agent",
-        content: "Yellow app session set up successfully 👍",
-      });
+      group.messages.push(getMessageWithCreateAppSessionStatus(group));
     }
 
     // Update the group in the database

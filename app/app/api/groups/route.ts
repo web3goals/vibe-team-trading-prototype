@@ -1,17 +1,12 @@
 import { demoConfig } from "@/config/demo";
 import { yellowConfig } from "@/config/yellow";
-import { getAgentYellowMessageSigner } from "@/lib/agent-utils";
 import { createFailedApiResponse, createSuccessApiResponse } from "@/lib/api";
 import { getErrorString } from "@/lib/error";
+import { getMessageWithCreateAppSessionRequest } from "@/lib/messages";
 import { Group } from "@/mongodb/models/group";
 import { findGroups, insertOrUpdateGroup } from "@/mongodb/services/group";
-import { GroupAgent, GroupMessage, GroupUser } from "@/types/group";
-import {
-  createAppSessionMessage as createCreateAppSessionMessage,
-  RPCAppDefinition,
-  RPCAppSessionAllocation,
-  RPCProtocolVersion,
-} from "@erc7824/nitrolite";
+import { GroupAgent, GroupUser } from "@/types/group";
+import { RPCAppDefinition, RPCProtocolVersion } from "@erc7824/nitrolite";
 import { ObjectId } from "mongodb";
 import { NextRequest } from "next/server";
 import z from "zod";
@@ -147,54 +142,6 @@ export async function POST(request: NextRequest) {
       application: yellowConfig.appName,
     };
 
-    // Define Yellow app allocations
-    const yellowAppAllocations: RPCAppSessionAllocation[] = [
-      {
-        participant: agent.address,
-        asset: "ytest.usd",
-        amount: Number(0).toString(),
-      },
-      ...users.map((user) => ({
-        participant: user.address,
-        asset: "ytest.usd",
-        amount: Number(10).toString(),
-      })),
-    ];
-
-    // Create Yellow create app session message signed by the agent
-    const yellowMessageSigner = await getAgentYellowMessageSigner(
-      agent.address,
-    );
-    const yellowMessage = await createCreateAppSessionMessage(
-      yellowMessageSigner,
-      {
-        definition: yellowAppDefinition,
-        allocations: yellowAppAllocations,
-      },
-    );
-
-    // Define group messages
-    const messages: GroupMessage[] = [];
-    messages.push({
-      id: new ObjectId().toString(),
-      category: "sign_yellow_create_app_session_message",
-      created: new Date(),
-      creatorAddress: agent.address,
-      creatorEnsName: agent.ensName,
-      creatorRole: "agent",
-      content: [
-        "Group created 🎉",
-        "To start vibe team trading, everyone needs to sign the Yellow message so I can set up our Yellow app session",
-      ].join("\n\n"),
-      extra: {
-        yellow: {
-          message: yellowMessage,
-          messageCreated: new Date(),
-          messageSignerAddresses: [agent.address],
-        },
-      },
-    });
-
     // Create a new group
     const group: Group = {
       _id: new ObjectId(),
@@ -204,9 +151,13 @@ export async function POST(request: NextRequest) {
       description: description,
       agent: agent,
       users: users,
-      messages: messages,
+      messages: [],
       yellowAppDefinition: yellowAppDefinition,
     };
+
+    // Create and add the initial message with the Yellow create app session request
+    const message = await getMessageWithCreateAppSessionRequest(group);
+    group.messages.push(message);
 
     // Insert the group into the database
     await insertOrUpdateGroup(group);
