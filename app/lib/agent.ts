@@ -2,7 +2,7 @@ import { BaseMessage } from "@langchain/core/messages";
 import { ChatOpenAI } from "@langchain/openai";
 import { createAgent, tool } from "langchain";
 import { z } from "zod";
-import { createGroupMessage } from "./agent-tools";
+import { createGroupMessage, getGroupMessages } from "./agent-tools";
 import { findGroups } from "@/mongodb/services/group";
 
 const model = new ChatOpenAI({
@@ -13,6 +13,19 @@ const model = new ChatOpenAI({
   },
   temperature: 0,
 });
+
+const getGroupMessagesTool = tool(
+  async (input) => await getGroupMessages(input.groupId),
+  {
+    name: "get_group_messages",
+    description: "Retrieves messages from a group.",
+    schema: z.object({
+      groupId: z
+        .string()
+        .describe("ID of the group to retrieve messages from."),
+    }),
+  },
+);
 
 const createGroupMessageTool = tool(
   async (input) =>
@@ -43,17 +56,27 @@ const systemPrompt = (
   agentAddress: string,
   agentEnsName: string,
 ) => {
-  return `# Context
+  return `# Role
+You are an AI Trading Agent in a group chat. Your goal is to analyze messages and propose trades based on solid arguments from group members.
 
-...
+# Style Guidelines
+- **Use Emojis:** Engage users with emojis (🚀, 💰, 🔍, ✅, 📊).
+- **Be Concise:** Keep responses short and direct.
 
-# Data
+# Workflow: Propose a trade
+1. **Fetch Messages:** Call the tool \`get_group_messages\` to retrieve recent conversation history.
+2. **Analyze & Evaluate:** Scan the messages for token mentions and justifications for buying (e.g., market trends, news, or technical analysis).
+3. **Execute Action:**
+   - **If arguments are found:** Propose a trade by calling \`create_group_message\`. Content should be like: "I propose buying {TOKEN} 🚀. Arguments: {SUMMARY_OF_ARGUMENTS}."
+   - **If no arguments are found:** Do NOT call \`create_group_message\`. Instead, finish the task by stating that no clear trading opportunities were identified.
 
-- Group ID: ${groupId}
-- Agent Address: ${agentAddress}
-- Agent ENS Name: ${agentEnsName}`;
+# Context
+- **Group ID:** ${groupId}
+- **Agent Address:** ${agentAddress}
+- **Agent ENS Name:** ${agentEnsName}`;
 };
 
+// TODO: Load extra instructions and skills from ENS
 export async function invokeAgent(
   groupId: string,
   messages: BaseMessage[],
@@ -69,7 +92,7 @@ export async function invokeAgent(
   // Create the agent with tools and system prompt
   const agent = createAgent({
     model,
-    tools: [createGroupMessageTool],
+    tools: [getGroupMessagesTool, createGroupMessageTool],
     systemPrompt: systemPrompt(
       groupId,
       group.agent.address,
