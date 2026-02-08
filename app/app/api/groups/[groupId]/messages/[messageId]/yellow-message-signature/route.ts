@@ -89,7 +89,9 @@ export async function PATCH(
     ) {
       group.yellowAppSessionId = yellowResponseJson.params.appSessionId;
       const content = "Yellow app session set up successfully 👍";
-      group.messages.push(getMessageWithCreateAppSessionStatus(group, content));
+      group.messages.push(
+        await getMessageWithCreateAppSessionStatus(group, content),
+      );
     }
 
     // Add a new message with withdraw request
@@ -111,7 +113,7 @@ export async function PATCH(
     ) {
       const content =
         "Withdrawal successful! The trade will commence shortly 🚀";
-      group.messages.push(getMessageWithWithdrawStatus(group, content));
+      group.messages.push(await getMessageWithWithdrawStatus(group, content));
     }
 
     // Update the group in the database
