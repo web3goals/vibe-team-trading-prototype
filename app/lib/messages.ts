@@ -176,3 +176,20 @@ export async function getMessageWithWithdrawRequest(
 
   return message;
 }
+
+export function getMessageWithWithdrawStatus(
+  group: Group,
+  content: string,
+): GroupMessage {
+  const message: GroupMessage = {
+    id: new ObjectId().toString(),
+    category: "withdraw_status",
+    created: new Date(),
+    creatorAddress: group.agent.address,
+    creatorEnsName: group.agent.ensName,
+    creatorRole: "agent",
+    content: content,
+  };
+
+  return message;
+}
